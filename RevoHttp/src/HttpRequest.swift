@@ -11,6 +11,7 @@ public class HttpRequest : NSObject {
     var url:String
     var params:[String:String]
     var headers:[String: String]
+    var body:String?
     
     var timeout:TimeInterval?
     
@@ -31,9 +32,8 @@ public class HttpRequest : NSObject {
         
         if (method == .get){
             request.url = URL(string: buildUrl())
-        }else{
-            //request.url = URL(fileURLWithPath: url)
-            request.httpBody = buildBody().data(using: .utf8)
+        } else {
+            request.httpBody = (body ?? buildBody()).data(using: .utf8)
         }
         
         addHeaders(&request)
@@ -59,7 +59,24 @@ public class HttpRequest : NSObject {
     }
     
     public func toCurl() -> String {
-        return ""
+        var result = "curl "
+        let p = params.map { key, value in
+            "\(key)=\(value)"
+        }.implode("&")
+        
+        if (p.count > 0) {
+            result = result + "-d \(p)"
+        }
+        
+        let h = headers.map { key, value in
+            "-H \(key): \(value)"
+        }.implode(" ")
+        
+        if (h.count > 0){
+            result = result + " \(h)"
+        }
+        
+        return result + " -X \(method) \(url)"
     }
     
     public func toString() -> String {
