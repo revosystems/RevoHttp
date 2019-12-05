@@ -92,9 +92,9 @@ class RevoHttpTests: XCTestCase {
         
         Http.call(.post, url: "https://httpbin.org/post", params:["name":"Jordi"], headers:["X-Header": "header-value"]) { (response:HttpBinResponse?, error:Error?) in
             guard let response = response else { return }
-            XCTAssertEqual("Jordi",                                 response.form["name"])
-            XCTAssertEqual("header-value",                          response.headers["X-Header"])
-            XCTAssertEqual("https://httpbin.org/post",              response.url)
+            XCTAssertEqual("Jordi",                    response.form["name"])
+            XCTAssertEqual("header-value",             response.headers["X-Header"])
+            XCTAssertEqual("https://httpbin.org/post", response.url)
             expectation.fulfill()
         }
         
