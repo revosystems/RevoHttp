@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		337D413123DE7A7237EAABDB /* libPods-RevoHttpTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 168F60BCD528CAFF7762A285 /* libPods-RevoHttpTests.a */; };
 		8DCA904623994B6A00CF8984 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DCA904523994B6A00CF8984 /* AppDelegate.swift */; };
 		8DCA904823994B6A00CF8984 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DCA904723994B6A00CF8984 /* SceneDelegate.swift */; };
 		8DCA904A23994B6A00CF8984 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DCA904923994B6A00CF8984 /* ViewController.swift */; };
@@ -14,6 +15,10 @@
 		8DCA904F23994B6E00CF8984 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8DCA904E23994B6E00CF8984 /* Assets.xcassets */; };
 		8DCA905223994B6E00CF8984 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8DCA905023994B6E00CF8984 /* LaunchScreen.storyboard */; };
 		8DCA905D23994B6E00CF8984 /* RevoHttpTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DCA905C23994B6E00CF8984 /* RevoHttpTests.swift */; };
+		8DCA906923994DA600CF8984 /* Http.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DCA906823994DA600CF8984 /* Http.swift */; };
+		8DCA906B23994E4500CF8984 /* HttpResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DCA906A23994E4500CF8984 /* HttpResponse.swift */; };
+		8DCA906D23994ED800CF8984 /* HttpRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DCA906C23994ED800CF8984 /* HttpRequest.swift */; };
+		FCD6BB43809B99F6856D6F8E /* libPods-RevoHttp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0974CB760EEDA86965A4D7EA /* libPods-RevoHttp.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -27,6 +32,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0974CB760EEDA86965A4D7EA /* libPods-RevoHttp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RevoHttp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		168F60BCD528CAFF7762A285 /* libPods-RevoHttpTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RevoHttpTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		26A1B3F753906F4AB478D1E4 /* Pods-RevoHttpTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RevoHttpTests.debug.xcconfig"; path = "Target Support Files/Pods-RevoHttpTests/Pods-RevoHttpTests.debug.xcconfig"; sourceTree = "<group>"; };
+		4653401A24C46D6553A721CA /* Pods-RevoHttp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RevoHttp.release.xcconfig"; path = "Target Support Files/Pods-RevoHttp/Pods-RevoHttp.release.xcconfig"; sourceTree = "<group>"; };
+		87B0DCAF3E8BAA8D252F28EF /* Pods-RevoHttpTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RevoHttpTests.release.xcconfig"; path = "Target Support Files/Pods-RevoHttpTests/Pods-RevoHttpTests.release.xcconfig"; sourceTree = "<group>"; };
+		8BF2749BE41885A16AE28D1D /* Pods-RevoHttp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RevoHttp.debug.xcconfig"; path = "Target Support Files/Pods-RevoHttp/Pods-RevoHttp.debug.xcconfig"; sourceTree = "<group>"; };
 		8DCA904223994B6A00CF8984 /* RevoHttp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RevoHttp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8DCA904523994B6A00CF8984 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8DCA904723994B6A00CF8984 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -38,6 +49,9 @@
 		8DCA905823994B6E00CF8984 /* RevoHttpTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RevoHttpTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8DCA905C23994B6E00CF8984 /* RevoHttpTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevoHttpTests.swift; sourceTree = "<group>"; };
 		8DCA905E23994B6E00CF8984 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8DCA906823994DA600CF8984 /* Http.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Http.swift; sourceTree = "<group>"; };
+		8DCA906A23994E4500CF8984 /* HttpResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpResponse.swift; sourceTree = "<group>"; };
+		8DCA906C23994ED800CF8984 /* HttpRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpRequest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -45,6 +59,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FCD6BB43809B99F6856D6F8E /* libPods-RevoHttp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -52,18 +67,30 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				337D413123DE7A7237EAABDB /* libPods-RevoHttpTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		44D55E1CF0FF1DC335A93761 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0974CB760EEDA86965A4D7EA /* libPods-RevoHttp.a */,
+				168F60BCD528CAFF7762A285 /* libPods-RevoHttpTests.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		8DCA903923994B6A00CF8984 = {
 			isa = PBXGroup;
 			children = (
 				8DCA904423994B6A00CF8984 /* RevoHttp */,
 				8DCA905B23994B6E00CF8984 /* RevoHttpTests */,
 				8DCA904323994B6A00CF8984 /* Products */,
+				94E74D8A835DCC9A4D104112 /* Pods */,
+				44D55E1CF0FF1DC335A93761 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -79,6 +106,7 @@
 		8DCA904423994B6A00CF8984 /* RevoHttp */ = {
 			isa = PBXGroup;
 			children = (
+				8DCA906723994D8700CF8984 /* src */,
 				8DCA904523994B6A00CF8984 /* AppDelegate.swift */,
 				8DCA904723994B6A00CF8984 /* SceneDelegate.swift */,
 				8DCA904923994B6A00CF8984 /* ViewController.swift */,
@@ -99,6 +127,28 @@
 			path = RevoHttpTests;
 			sourceTree = "<group>";
 		};
+		8DCA906723994D8700CF8984 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				8DCA906823994DA600CF8984 /* Http.swift */,
+				8DCA906A23994E4500CF8984 /* HttpResponse.swift */,
+				8DCA906C23994ED800CF8984 /* HttpRequest.swift */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		94E74D8A835DCC9A4D104112 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				8BF2749BE41885A16AE28D1D /* Pods-RevoHttp.debug.xcconfig */,
+				4653401A24C46D6553A721CA /* Pods-RevoHttp.release.xcconfig */,
+				26A1B3F753906F4AB478D1E4 /* Pods-RevoHttpTests.debug.xcconfig */,
+				87B0DCAF3E8BAA8D252F28EF /* Pods-RevoHttpTests.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -106,6 +156,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8DCA906123994B6E00CF8984 /* Build configuration list for PBXNativeTarget "RevoHttp" */;
 			buildPhases = (
+				FA5F8EF8D09F5F9206121271 /* [CP] Check Pods Manifest.lock */,
 				8DCA903E23994B6A00CF8984 /* Sources */,
 				8DCA903F23994B6A00CF8984 /* Frameworks */,
 				8DCA904023994B6A00CF8984 /* Resources */,
@@ -123,6 +174,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8DCA906423994B6E00CF8984 /* Build configuration list for PBXNativeTarget "RevoHttpTests" */;
 			buildPhases = (
+				CD1371994BE425FF35195308 /* [CP] Check Pods Manifest.lock */,
 				8DCA905423994B6E00CF8984 /* Sources */,
 				8DCA905523994B6E00CF8984 /* Frameworks */,
 				8DCA905623994B6E00CF8984 /* Resources */,
@@ -195,12 +247,62 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		CD1371994BE425FF35195308 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-RevoHttpTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		FA5F8EF8D09F5F9206121271 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-RevoHttp-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		8DCA903E23994B6A00CF8984 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8DCA906B23994E4500CF8984 /* HttpResponse.swift in Sources */,
+				8DCA906D23994ED800CF8984 /* HttpRequest.swift in Sources */,
 				8DCA904A23994B6A00CF8984 /* ViewController.swift in Sources */,
+				8DCA906923994DA600CF8984 /* Http.swift in Sources */,
 				8DCA904623994B6A00CF8984 /* AppDelegate.swift in Sources */,
 				8DCA904823994B6A00CF8984 /* SceneDelegate.swift in Sources */,
 			);
@@ -360,6 +462,7 @@
 		};
 		8DCA906223994B6E00CF8984 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8BF2749BE41885A16AE28D1D /* Pods-RevoHttp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -378,6 +481,7 @@
 		};
 		8DCA906323994B6E00CF8984 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4653401A24C46D6553A721CA /* Pods-RevoHttp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -396,6 +500,7 @@
 		};
 		8DCA906523994B6E00CF8984 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 26A1B3F753906F4AB478D1E4 /* Pods-RevoHttpTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -418,6 +523,7 @@
 		};
 		8DCA906623994B6E00CF8984 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 87B0DCAF3E8BAA8D252F28EF /* Pods-RevoHttpTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
