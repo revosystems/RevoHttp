@@ -17,7 +17,7 @@ Pod::Spec.new do |spec|
   #
 
   spec.name         = "RevoHttp"
-  spec.version      = "0.0.2"
+  spec.version      = "0.0.3"
   spec.summary      = "Foundation http."
 
   # This description is used to generate tags and improve search results.
@@ -81,7 +81,7 @@ Pod::Spec.new do |spec|
   #  Supports git, hg, bzr, svn and HTTP.
   #
 
-  spec.source       = { :git => "https://github.com/revosystems/revohttp.git", :tag => "0.0.2" }
+  spec.source       = { :git => "https://github.com/revosystems/revohttp.git", :tag => "0.0.3" }
 
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
