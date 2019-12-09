@@ -33,17 +33,17 @@ public class Http : NSObject {
         Self.call(request, then:then)
     }
     
-    public static func put(_ url:String, params:[String:String] = [:], headers:[String:String] = [:], then:@escaping(_ response:HttpResponse) -> Void) {
+    public static func put(_ url:String, params:[String:Codable] = [:], headers:[String:String] = [:], then:@escaping(_ response:HttpResponse) -> Void) {
         let request = HttpRequest(method: .put, url: url, params: params, headers: headers)
         Self.call(request, then:then)
     }
     
-    public static func patch(_ url:String, params:[String:String] = [:], headers:[String:String] = [:], then:@escaping(_ response:HttpResponse) -> Void) {
+    public static func patch(_ url:String, params:[String:Codable] = [:], headers:[String:String] = [:], then:@escaping(_ response:HttpResponse) -> Void) {
         let request = HttpRequest(method: .patch, url: url, params: params, headers: headers)
         Self.call(request, then:then)
     }
     
-    public static func delete(_ url:String, params:[String:String] = [:], headers:[String:String] = [:], then:@escaping(_ response:HttpResponse) -> Void) {
+    public static func delete(_ url:String, params:[String:Codable] = [:], headers:[String:String] = [:], then:@escaping(_ response:HttpResponse) -> Void) {
         let request = HttpRequest(method: .delete, url: url, params: params, headers: headers)
         Self.call(request, then:then)
     }
