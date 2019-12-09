@@ -9,16 +9,16 @@ public class HttpRequest : NSObject {
     
     var method:Method
     var url:String
-    var params:[String:String]
+    var params:[HttpParam]
     var headers:[String: String]
     var body:String?
     
     var timeout:TimeInterval?
     
-    public init(method:Method, url:String, params:[String:String] = [:], headers:[String:String] = [:]){
+    public init(method:Method, url:String, params:HttpParamProtocol = [:], headers:[String:String] = [:]){
         self.method  = method
         self.url     = url
-        self.params  = params
+        self.params  = params.createParams(nil)
         self.headers = headers
     }
     
@@ -42,8 +42,8 @@ public class HttpRequest : NSObject {
     }
     
     func buildBody(_ encoded:Bool = false) -> String {
-        return params.map { key, value in
-            encoded ? "\(key)=\(value.urlEncoded() ?? "")" : "\(key)=\(value)"
+        return params.map { param in
+            param.encoded(urlEncoded: encoded)
         }.implode("&")
     }
     
@@ -60,8 +60,8 @@ public class HttpRequest : NSObject {
     
     public func toCurl() -> String {
         var result = "curl "
-        let p = params.map { key, value in
-            "\(key)=\(value)"
+        let p = params.map { param in
+            param.encoded()
         }.implode("&")
         
         if (p.count > 0) {
@@ -82,6 +82,44 @@ public class HttpRequest : NSObject {
     public func toString() -> String {
         return ""
     }
+}
+
+public protocol HttpParamProtocol {
+    func createParams(_ key: String?) -> [HttpParam]
+}
+
+extension Dictionary : HttpParamProtocol{
+    public func createParams(_ key: String?) -> [HttpParam] {
+        var collect = [HttpParam]()
+        for (k, v) in self {
+            if let nestedKey = k as? String {
+                let useKey = key != nil ? "\(key!)[\(nestedKey)]" : nestedKey
+                if let subParam = v as? HttpParamProtocol {
+                    collect.append(contentsOf: subParam.createParams(useKey))
+                } else {
+                    collect.append(HttpParam(key: useKey, storedValue: v as AnyObject))
+                }
+            }
+        }
+        return collect
+    }
+}
+
+public struct HttpParam{
+    var key: String
+    let storedValue: AnyObject
     
-    
+    var value: String {
+        if storedValue is NSNull {
+            return ""
+        } else if let v = storedValue as? String {
+            return v
+        } else {
+            return storedValue.description ?? ""
+        }
+    }
+        
+    public func encoded(urlEncoded:Bool = false) -> String {
+        urlEncoded ? "\(key)=\(value.urlEncoded() ?? "")" : "\(key)=\(value)"
+    }
 }

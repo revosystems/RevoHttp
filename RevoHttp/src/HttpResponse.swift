@@ -3,9 +3,9 @@ import Foundation
 
 public class HttpResponse : NSObject {
 
-    let data:Data?
-    let response:URLResponse?
-    let error:Error?
+    public let data:Data?
+    public let response:URLResponse?
+    public let error:Error?
     
     public init(data:Data?, response:URLResponse?, error:Error?){
         self.data       = data

@@ -4,12 +4,12 @@ public class Http : NSObject {
     
     static var debugMode = false
     
-    public static func call(_ method:HttpRequest.Method, url:String, params:[String:String] = [:], headers:[String:String] = [:], then:@escaping(_ response:HttpResponse) -> Void) {
+    public static func call(_ method:HttpRequest.Method, url:String, params:[String:Codable] = [:], headers:[String:String] = [:], then:@escaping(_ response:HttpResponse) -> Void) {
         let request = HttpRequest(method: method, url: url, params: params, headers: headers)
         Self.call(request, then:then)
     }
     
-    public static func call<T:Codable>(_ method:HttpRequest.Method, url:String, params:[String:String] = [:], headers:[String:String] = [:], then:@escaping(_ response:T?, _ error:Error?) -> Void) {
+    public static func call<T:Codable>(_ method:HttpRequest.Method, url:String, params:[String:Codable] = [:], headers:[String:String] = [:], then:@escaping(_ response:T?, _ error:Error?) -> Void) {
         let request = HttpRequest(method: method, url: url, params: params, headers: headers)
         Self.call(request) { response in
             let result:T? = response.decoded()
@@ -17,12 +17,12 @@ public class Http : NSObject {
         }
     }
     
-    public static func get(_ url:String, params:[String:String] = [:], headers:[String:String] = [:], then:@escaping(_ response:HttpResponse) -> Void) {
+    public static func get(_ url:String, params:[String:Codable] = [:], headers:[String:String] = [:], then:@escaping(_ response:HttpResponse) -> Void) {
         let request = HttpRequest(method: .get, url: url, params: params, headers: headers)
         Self.call(request, then:then)
     }
     
-    public static func post(_ url:String, params:[String:String] = [:], headers:[String:String] = [:], then:@escaping(_ response:HttpResponse) -> Void) {
+    public static func post(_ url:String, params:[String:Codable] = [:], headers:[String:String] = [:], then:@escaping(_ response:HttpResponse) -> Void) {
         let request = HttpRequest(method: .post, url: url, params: params, headers: headers)
         Self.call(request, then:then)
     }

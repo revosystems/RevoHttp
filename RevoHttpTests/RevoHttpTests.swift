@@ -33,6 +33,30 @@ class RevoHttpTests: XCTestCase {
         wait(for: [expectation], timeout: 5)
     }
     
+    func test_can_send_numbers_as_parameters(){
+        
+        let expectation = XCTestExpectation(description: "Http request")
+        
+        struct HttpBinResponse: Codable {
+            let form:[String:String]
+            let headers:[String:String]
+            let url:String
+        }
+        
+        Http.post("https://httpbin.org/post", params:["name" : 12], headers:["X-Header": "header-value"]) { response in
+            
+            print(response.toString)
+            let json:HttpBinResponse = response.decoded()!
+            XCTAssertEqual("12",                                    json.form["name"])
+            XCTAssertEqual("header-value",                          json.headers["X-Header"])
+            XCTAssertEqual("https://httpbin.org/post",              json.url)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 5)
+        
+    }
+    
     func test_can_post(){
         
         let expectation = XCTestExpectation(description: "Http request")
