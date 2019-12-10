@@ -65,11 +65,11 @@ public class HttpRequest : NSObject {
         }.implode("&")
         
         if (p.count > 0) {
-            result = result + "-d \(p)"
+            result = result + "-d \"\(p)\""
         }
         
         let h = headers.map { key, value in
-            "-H \(key): \(value)"
+            "-H \"\(key): \(value)\""
         }.implode(" ")
         
         if (h.count > 0){

@@ -2,7 +2,7 @@ import Foundation
 
 public class Http : NSObject {
     
-    static var debugMode = false
+    public static var debugMode = false
     
     public static func call(_ method:HttpRequest.Method, url:String, params:[String:Codable] = [:], headers:[String:String] = [:], then:@escaping(_ response:HttpResponse) -> Void) {
         let request = HttpRequest(method: method, url: url, params: params, headers: headers)
