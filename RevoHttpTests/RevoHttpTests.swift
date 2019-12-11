@@ -125,13 +125,13 @@ class RevoHttpTests: XCTestCase {
         wait(for: [expectation], timeout: 5)
     }
     
-    /*func test_can_convert_request_to_curl() {
+    func test_can_convert_request_to_curl() {
         
         let request = HttpRequest(method: .get, url: "https://httpbin.org/get", params: ["name" : "Jordi", "lastName" : "Puigdellívol"], headers: ["X-Header" : "Value1", "X-Header2": "Value2"])
         
         let result = request.toCurl()
-        XCTAssertEqual("curl -d lastName=Puigdellívol&name=Jordi -H X-Header: Value1 -H X-Header2: Value2 -X get https://httpbin.org/get", result)
-    }*/
+        XCTAssertEqual("curl -d \"lastName=Puigdellívol&name=Jordi\" -H \"X-Header: Value1\" -H \"X-Header2: Value2\" -X GET https://httpbin.org/get", result)
+    }
     
     func test_can_use_http_fake(){
         HttpFake.enable()

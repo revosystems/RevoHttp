@@ -76,11 +76,15 @@ public class HttpRequest : NSObject {
             result = result + " \(h)"
         }
         
-        return result + " -X \(method) \(url)"
+        return result + " -X \(methodUppercased) \(url)"
     }
     
     public func toString() -> String {
         return ""
+    }
+    
+    var methodUppercased: String {
+        "\(method)".uppercased()
     }
 }
 
