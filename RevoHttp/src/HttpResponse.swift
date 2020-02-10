@@ -1,9 +1,5 @@
 import Foundation
 
-enum HttpError : Error {
-    case invalidUrl
-}
-
 public class HttpResponse : NSObject {
     
     public let data:Data?
