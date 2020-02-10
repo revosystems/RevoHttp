@@ -53,7 +53,9 @@ public class Http : NSObject {
             debugPrint("****** HTTP DEBUG ***** " + request.toCurl())
         }
         
-        let urlRequest  = request.generate()
+        guard let urlRequest  = request.generate() else {
+            return then(HttpResponse(failed: "Invalid URL"))
+        }
         let session     = Self.getUrlSession()
         let dataTask    = session.dataTask(with: urlRequest) { data, urlResponse, error in
             DispatchQueue.main.async {

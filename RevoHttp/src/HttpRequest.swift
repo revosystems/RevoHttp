@@ -7,11 +7,11 @@ public class HttpRequest : NSObject {
         case get, post, patch, put, delete
     }
     
-    var method:Method
-    var url:String
-    var params:[HttpParam]
-    var headers:[String: String]
-    var body:String?
+    var method  :Method
+    var url     :String
+    var params  :[HttpParam]
+    var headers :[String: String]
+    var body    :String?
     
     var timeout:TimeInterval?
     
@@ -22,8 +22,11 @@ public class HttpRequest : NSObject {
         self.headers = headers
     }
     
-    public func generate() -> URLRequest{
-        var request = URLRequest(url: URL(string: url)!)
+    public func generate() -> URLRequest? {
+        guard let url = URL(string: url) else { return nil }
+        
+        var request = URLRequest(url: url)
+        
         request.httpMethod = "\(method)"
         
         if let timeout = self.timeout {

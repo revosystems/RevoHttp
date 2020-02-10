@@ -1,8 +1,11 @@
 import Foundation
 
+enum HttpError : Error {
+    case invalidUrl
+}
 
 public class HttpResponse : NSObject {
-
+    
     public let data:Data?
     public let response:URLResponse?
     public let error:Error?
@@ -11,6 +14,12 @@ public class HttpResponse : NSObject {
         self.data       = data
         self.response   = response
         self.error      = error
+    }
+    
+    public init(failed:String){
+        self.data       = nil
+        self.response   = nil
+        self.error      = HttpError.invalidUrl
     }
     
     public var statusCode:Int{
@@ -37,6 +46,5 @@ public class HttpResponse : NSObject {
             return nil
         }
     }
-    
     
 }
