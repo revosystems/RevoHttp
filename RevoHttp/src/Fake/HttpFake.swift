@@ -10,6 +10,8 @@ public class HttpFake : NSObject {
     static var swizzled = false
     
     static func enable(){
+        Self.responses = [:]
+        Self.globalResponses = []
         Self.calls = []
         if (swizzled) { return }
         
