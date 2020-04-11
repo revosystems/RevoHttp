@@ -3,13 +3,13 @@ import Foundation
 
 public class HttpFake : NSObject {
     
-    static var calls:[HttpRequest]              = []
+    public static var calls:[HttpRequest]       = []
     static var responses:[String:HttpResponse]  = [:]
     static var globalResponses:[HttpResponse]   = []
     
     static var swizzled = false
     
-    static func enable(){
+    public static func enable(){
         Self.responses = [:]
         Self.globalResponses = []
         Self.calls = []
@@ -25,7 +25,7 @@ public class HttpFake : NSObject {
         swizzled = true
     }
     
-    static func disable(){
+    public static func disable(){
         if (!swizzled) { return }
         swizzled = false
         Self.enable()
