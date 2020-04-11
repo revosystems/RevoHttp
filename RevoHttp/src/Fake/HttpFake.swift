@@ -55,11 +55,24 @@ public class HttpFake : NSObject {
         let globalResponse  = HttpResponse(data:response.data(using: .utf8), response:httpResponse , error: nil)
         Self.globalResponses.append(globalResponse)
     }
-    
-    public static func addEncodedResponse<T:Codable>(_ response:T, status:Int = 200) {
+        
+    public static func addResponse<T:Codable>(encoded response:T, status:Int = 200) {
         let data = try! response.encode()
         let httpResponse    = HTTPURLResponse(url: URL(string:"http://fakeUrl.com")!, statusCode: status, httpVersion: "1.0", headerFields: nil)
         let globalResponse  = HttpResponse(data:data, response:httpResponse , error: nil)
         Self.globalResponses.append(globalResponse)
+    }
+    
+    public static func addResponse(for url:String, _ response:String, status:Int = 200) {
+        let httpResponse    = HTTPURLResponse(url: URL(string:"http://fakeUrl.com")!, statusCode: status, httpVersion: "1.0", headerFields: nil)
+        let concreteResponse  = HttpResponse(data:response.data(using: .utf8), response:httpResponse , error: nil)
+        Self.responses[url]   = concreteResponse
+    }
+    
+    public static func addResponse<T:Codable>(for url:String, encoded response:T, status:Int = 200) {
+        let data = try! response.encode()
+        let httpResponse    = HTTPURLResponse(url: URL(string:"http://fakeUrl.com")!, statusCode: status, httpVersion: "1.0", headerFields: nil)
+        let concreteResponse  = HttpResponse(data:data, response:httpResponse , error: nil)
+        Self.responses[url]   = concreteResponse
     }
 }

@@ -149,7 +149,7 @@ class RevoHttpTests: XCTestCase {
     
     func test_can_use_http_fake_with_autoEncodings(){
         HttpFake.enable()
-        HttpFake.addEncodedResponse(["my-name" : "jordi"])
+        HttpFake.addResponse(encoded: ["my-name" : "jordi"])
         
         let expectation = XCTestExpectation(description: "Http request")
         Http.post("https://httpbin.org/post", body:"name=Jordi", headers:["X-Header": "header-value"]) { response in
@@ -159,6 +159,38 @@ class RevoHttpTests: XCTestCase {
         }
            
         wait(for: [expectation], timeout: 5)
+    }
+    
+    func test_can_use_fake_for_concrete_urls() {
+        HttpFake.enable()
+        
+        HttpFake.addResponse(for:"https://test-url.org/post" , "{\"name\":\"batman\"}")
+        HttpFake.addResponse(for:"https://test-url-encoded.org/post" , encoded:["name" : "joker"])
+        HttpFake.addResponse("{\"name\":\"robin\"}")
+        
+        let expectation = XCTestExpectation(description: "Http request")
+        Http.get("https://any-url.org") { response in
+            XCTAssertEqual(1, HttpFake.calls.count)
+            XCTAssertEqual("{\"name\":\"robin\"}", response.toString)
+            expectation.fulfill()
+        }
+        
+        let expectation2 = XCTestExpectation(description: "Http request")
+        Http.get("https://test-url.org/post") { response in
+            XCTAssertEqual(2, HttpFake.calls.count)
+            XCTAssertEqual("{\"name\":\"batman\"}", response.toString)
+            expectation2.fulfill()
+        }
+        
+        let expectation3 = XCTestExpectation(description: "Http request")
+        Http.get("https://test-url-encoded.org/post") { response in
+            XCTAssertEqual(3, HttpFake.calls.count)
+            XCTAssertEqual("{\"name\":\"joker\"}", response.toString)
+            expectation3.fulfill()
+        }
+           
+           
+        wait(for: [expectation, expectation2, expectation3], timeout: 5)
     }
 
 }
