@@ -1,5 +1,5 @@
 PODS:
-  - RevoFoundation (0.0.25)
+  - RevoFoundation (0.0.43)
 
 DEPENDENCIES:
   - RevoFoundation
@@ -9,8 +9,8 @@ SPEC REPOS:
     - RevoFoundation
 
 SPEC CHECKSUMS:
-  RevoFoundation: 97724b448f6c1eab9ef236ecefe35ae75d2a3701
+  RevoFoundation: c9999d052981a02c5c15260dfb90cd7b665cd403
 
 PODFILE CHECKSUM: 9cb5cf14b95b566960199e173b82560ca9dcf6e6
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.9.3

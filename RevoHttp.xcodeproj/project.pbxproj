@@ -19,6 +19,7 @@
 		8DCA906923994DA600CF8984 /* Http.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DCA906823994DA600CF8984 /* Http.swift */; };
 		8DCA906B23994E4500CF8984 /* HttpResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DCA906A23994E4500CF8984 /* HttpResponse.swift */; };
 		8DCA906D23994ED800CF8984 /* HttpRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DCA906C23994ED800CF8984 /* HttpRequest.swift */; };
+		8DCF23C624F6CA3100176B0C /* MultipartHttpRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DCF23C524F6CA3100176B0C /* MultipartHttpRequest.swift */; };
 		BBAFBFE623F15179000F8C68 /* HttpError.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAFBFE523F15179000F8C68 /* HttpError.swift */; };
 		FCD6BB43809B99F6856D6F8E /* libPods-RevoHttp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0974CB760EEDA86965A4D7EA /* libPods-RevoHttp.a */; };
 /* End PBXBuildFile section */
@@ -55,6 +56,7 @@
 		8DCA906823994DA600CF8984 /* Http.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Http.swift; sourceTree = "<group>"; };
 		8DCA906A23994E4500CF8984 /* HttpResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpResponse.swift; sourceTree = "<group>"; };
 		8DCA906C23994ED800CF8984 /* HttpRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpRequest.swift; sourceTree = "<group>"; };
+		8DCF23C524F6CA3100176B0C /* MultipartHttpRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipartHttpRequest.swift; sourceTree = "<group>"; };
 		BBAFBFE523F15179000F8C68 /* HttpError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpError.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -146,6 +148,7 @@
 				8DCA906823994DA600CF8984 /* Http.swift */,
 				8DCA906A23994E4500CF8984 /* HttpResponse.swift */,
 				8DCA906C23994ED800CF8984 /* HttpRequest.swift */,
+				8DCF23C524F6CA3100176B0C /* MultipartHttpRequest.swift */,
 				BBAFBFE523F15179000F8C68 /* HttpError.swift */,
 			);
 			path = src;
@@ -315,6 +318,7 @@
 				8DCA906B23994E4500CF8984 /* HttpResponse.swift in Sources */,
 				8DCA906D23994ED800CF8984 /* HttpRequest.swift in Sources */,
 				8DCA904A23994B6A00CF8984 /* ViewController.swift in Sources */,
+				8DCF23C624F6CA3100176B0C /* MultipartHttpRequest.swift in Sources */,
 				8DCA906923994DA600CF8984 /* Http.swift in Sources */,
 				BBAFBFE623F15179000F8C68 /* HttpError.swift in Sources */,
 				8DCA904623994B6A00CF8984 /* AppDelegate.swift in Sources */,

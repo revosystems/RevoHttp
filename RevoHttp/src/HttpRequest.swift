@@ -61,6 +61,7 @@ public class HttpRequest : NSObject {
         }
     }
     
+    
     public func toCurl() -> String {
         var result = "curl "
         let p = params.map { param in

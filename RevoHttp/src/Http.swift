@@ -65,6 +65,23 @@ public class Http : NSObject {
         dataTask.resume()
     }
     
+    @objc dynamic public class func callMultipart(_ request:MultipartHttpRequest, then:@escaping(_ response:HttpResponse)->Void) {
+        if (Self.debugMode) {
+            debugPrint("****** HTTP DEBUG ***** " + request.toCurl())
+        }
+        
+        guard let urlRequest  = request.generate() else {
+            return then(HttpResponse(failed: "Invalid URL"))
+        }
+        let session     = Self.getUrlSession()
+        let dataTask    = session.uploadTask(with: urlRequest, from: request.generateData()) { responseData, urlResponse, error in
+            DispatchQueue.main.async {
+                then(HttpResponse(data:responseData, response:urlResponse, error:error))
+            }
+        }
+        dataTask.resume()
+    }
+    
     public static func getUrlSession() -> URLSession {
         URLSession.shared
     }
