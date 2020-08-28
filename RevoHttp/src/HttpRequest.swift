@@ -13,7 +13,7 @@ public class HttpRequest : NSObject {
     var headers :[String: String]
     var body    :String?
     
-    var timeout:TimeInterval?
+    public var timeout:TimeInterval?
     
     public init(method:Method, url:String, params:HttpParamProtocol = [:], headers:[String:String] = [:]){
         self.method  = method
