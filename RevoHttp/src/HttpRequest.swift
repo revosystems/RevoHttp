@@ -7,11 +7,11 @@ public class HttpRequest : NSObject {
         case get, post, patch, put, delete
     }
     
-    var method  :Method
-    var url     :String
-    var params  :[HttpParam]
-    var headers :[String: String]
-    var body    :String?
+    public var method  :Method
+    public var url     :String
+    public var params  :[HttpParam]
+    public var headers :[String: String]
+    public var body    :String?
     
     public var timeout:TimeInterval?
     
