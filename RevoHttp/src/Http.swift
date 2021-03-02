@@ -9,6 +9,29 @@ public class Http : NSObject {
         Self.call(request, then:then)
     }
     
+    public static func call(_ method:HttpRequest.Method, _ url:String, body:String, headers:[String:String] = [:], then:@escaping(_ response:HttpResponse) -> Void) {
+        let request = HttpRequest(method: method, url: url, headers: headers)
+        request.body = body
+        Self.call(request, then:then)
+    }
+    
+    public static func call<T:Codable,Z:Encodable>(_ method:HttpRequest.Method, _ url:String, json:Z, headers:[String:String] = [:], then:@escaping(_ response:T?, _ error:String?) -> Void) {
+        let request = HttpRequest(method: method, url: url, headers: headers)
+    
+        guard let data = try? JSONEncoder().encode(json) else {
+            return then(nil, "Not encodable")
+        }
+        guard let body = String(data:data, encoding: .utf8) else {
+            return then(nil, "Can't convert to string")
+        }
+        request.body = body
+                
+        Self.call(request) { response in
+            let result:T? = response.decoded()
+            then(result, response.error?.localizedDescription)
+        }
+    }
+    
     public static func call<T:Codable>(_ method:HttpRequest.Method, url:String, params:[String:Codable] = [:], headers:[String:String] = [:], then:@escaping(_ response:T?, _ error:Error?) -> Void) {
         let request = HttpRequest(method: method, url: url, params: params, headers: headers)
         Self.call(request) { response in
