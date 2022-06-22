@@ -114,7 +114,7 @@ class RevoHttpTests: XCTestCase {
             let url:String
         }
         
-        Http.call(.post, url: "https://httpbin.org/post", params:["name":"Jordi"], headers:["X-Header": "header-value"]) { (response:HttpBinResponse?, error:Error?) in
+        Http().call(.post, url: "https://httpbin.org/post", params:["name":"Jordi"], headers:["X-Header": "header-value"]) { (response:HttpBinResponse?, error:Error?) in
             guard let response = response else { return }
             XCTAssertEqual("Jordi",                    response.form["name"])
             XCTAssertEqual("header-value",             response.headers["X-Header"])
@@ -193,4 +193,29 @@ class RevoHttpTests: XCTestCase {
         wait(for: [expectation, expectation2, expectation3], timeout: 5)
     }
 
+    func test_can_add_an_hmac_header(){
+        
+        let expectation = XCTestExpectation(description: "Http request")
+        
+        struct HttpBinResponse: Codable {
+            let args:[String:String]
+            let headers:[String:String]
+            let url:String
+        }
+        
+        
+        Http().withHmacSHA256(header:"X-Header-Sha", privateKey: "PRVIATE_KEY").get("https://httpbin.org/get", params:["name" : "Jordi"], headers:["X-Header": "header-value"]) { response in
+            
+            print(response.toString)
+            let json:HttpBinResponse = response.decoded()!
+            XCTAssertEqual("Jordi",                                 json.args["name"])
+            XCTAssertEqual("header-value",                          json.headers["X-Header"])
+            XCTAssertEqual("7f2d061df8af79d74afb651641bd1b15a38ae8d22aed75120c4c020ab844da18",                          json.headers["X-Header-Sha"])
+            XCTAssertEqual("https://httpbin.org/get?name=Jordi",    json.url)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 5)
+    }
+    
 }

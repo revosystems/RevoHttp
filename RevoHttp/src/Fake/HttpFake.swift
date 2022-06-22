@@ -16,8 +16,8 @@ public class HttpFake : NSObject {
         if (swizzled) { return }
         
                 
-        guard let originalMethod = class_getClassMethod(Http.self,     #selector(call(_:then:))),
-            let newMethod        = class_getClassMethod(HttpFake.self, #selector(call(_:then:))) else {
+        guard let originalMethod = class_getInstanceMethod(Http.self,     #selector(call(_:then:))),
+            let newMethod        = class_getInstanceMethod(HttpFake.self, #selector(call(_:then:))) else {
                 return
         }
         
@@ -32,18 +32,18 @@ public class HttpFake : NSObject {
         swizzled = false
     }
     
-    @objc dynamic public class func call(_ request:HttpRequest, then:@escaping(_ response:HttpResponse)->Void) {
-        calls.append(request)
+    @objc dynamic public func call(_ request:HttpRequest, then:@escaping(_ response:HttpResponse)->Void) {
+        Self.calls.append(request)
         
-        if let toRespond = responses[request.url] {
+        if let toRespond = Self.responses[request.url] {
             return then(toRespond)
         }
         
-        if (globalResponses.count == 1) {
-            return then(globalResponses.first!)
+        if (Self.globalResponses.count == 1) {
+            return then(Self.globalResponses.first!)
         }
         
-        if let toRespond = globalResponses.pop() {
+        if let toRespond = Self.globalResponses.pop() {
             return then(toRespond)
         }
         

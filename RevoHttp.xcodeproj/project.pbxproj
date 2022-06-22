@@ -21,6 +21,7 @@
 		8DCA906D23994ED800CF8984 /* HttpRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DCA906C23994ED800CF8984 /* HttpRequest.swift */; };
 		8DCF23C624F6CA3100176B0C /* MultipartHttpRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DCF23C524F6CA3100176B0C /* MultipartHttpRequest.swift */; };
 		BBAFBFE623F15179000F8C68 /* HttpError.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAFBFE523F15179000F8C68 /* HttpError.swift */; };
+		EAB991012863250E000C0CB5 /* HttpStaticExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAB991002863250E000C0CB5 /* HttpStaticExtension.swift */; };
 		FCD6BB43809B99F6856D6F8E /* libPods-RevoHttp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0974CB760EEDA86965A4D7EA /* libPods-RevoHttp.a */; };
 /* End PBXBuildFile section */
 
@@ -58,6 +59,7 @@
 		8DCA906C23994ED800CF8984 /* HttpRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpRequest.swift; sourceTree = "<group>"; };
 		8DCF23C524F6CA3100176B0C /* MultipartHttpRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipartHttpRequest.swift; sourceTree = "<group>"; };
 		BBAFBFE523F15179000F8C68 /* HttpError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpError.swift; sourceTree = "<group>"; };
+		EAB991002863250E000C0CB5 /* HttpStaticExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpStaticExtension.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +95,7 @@
 			isa = PBXGroup;
 			children = (
 				8D3B0C8523996BE0003C1847 /* HttpFake.swift */,
+				EAB991002863250E000C0CB5 /* HttpStaticExtension.swift */,
 			);
 			path = Fake;
 			sourceTree = "<group>";
@@ -320,6 +323,7 @@
 				8DCA904A23994B6A00CF8984 /* ViewController.swift in Sources */,
 				8DCF23C624F6CA3100176B0C /* MultipartHttpRequest.swift in Sources */,
 				8DCA906923994DA600CF8984 /* Http.swift in Sources */,
+				EAB991012863250E000C0CB5 /* HttpStaticExtension.swift in Sources */,
 				BBAFBFE623F15179000F8C68 /* HttpError.swift in Sources */,
 				8DCA904623994B6A00CF8984 /* AppDelegate.swift in Sources */,
 				8D3B0C8623996BE0003C1847 /* HttpFake.swift in Sources */,
