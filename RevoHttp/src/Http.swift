@@ -5,6 +5,10 @@ public class Http : NSObject {
     
     public static var debugMode = false
     
+    lazy var urlSession:URLSession = {
+        URLSession.shared
+    }()
+    
     struct Hmac {
         let header:String
         let privateKey:String
@@ -88,14 +92,14 @@ public class Http : NSObject {
         
         if let hmac = hmac {
             if let hash = request.buildBody().hmac256(hmac.privateKey) {
-            request.headers[hmac.header] = hash
-        }
+                request.headers[hmac.header] = hash
+            }
         }
         
         guard let urlRequest  = request.generate() else {
             return then(HttpResponse(failed: "Invalid URL"))
         }
-        let session     = Self.getUrlSession()
+        let session     = urlSession
         let dataTask    = session.dataTask(with: urlRequest) { data, urlResponse, error in
             DispatchQueue.main.async {
                 then(HttpResponse(data:data, response:urlResponse, error:error))
@@ -112,7 +116,7 @@ public class Http : NSObject {
         guard let urlRequest  = request.generate() else {
             return then(HttpResponse(failed: "Invalid URL"))
         }
-        let session     = Self.getUrlSession()
+        let session     = urlSession
         let dataTask    = session.uploadTask(with: urlRequest, from: request.generateData()) { responseData, urlResponse, error in
             DispatchQueue.main.async {
                 then(HttpResponse(data:responseData, response:urlResponse, error:error))
@@ -121,13 +125,14 @@ public class Http : NSObject {
         dataTask.resume()
     }
     
-    public static func getUrlSession() -> URLSession {
-        URLSession.shared
-    }
-    
     //MARK: Crypto
     public func withHmacSHA256(header:String, privateKey:String) -> Self {
         hmac = Hmac(header: header, privateKey: privateKey)
+        return self
+    }
+    
+    public func with(session: URLSession) -> Self {
+        urlSession = session
         return self
     }
 }
