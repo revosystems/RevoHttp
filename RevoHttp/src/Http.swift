@@ -4,6 +4,7 @@ import RevoFoundation
 public class Http : NSObject {
     
     public static var debugMode = false
+    var insecureUrlSession:InsecureUrlSession?
     
     lazy var urlSession:URLSession = {
         URLSession.shared
@@ -133,6 +134,12 @@ public class Http : NSObject {
     
     public func with(session: URLSession) -> Self {
         urlSession = session
+        return self
+    }
+    
+    public func allowUnsecureUrls() -> Self {
+        insecureUrlSession = InsecureUrlSession()
+        urlSession = insecureUrlSession!.session
         return self
     }
 }
