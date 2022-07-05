@@ -218,4 +218,19 @@ class RevoHttpTests: XCTestCase {
         wait(for: [expectation], timeout: 5)
     }
     
+    func test_it_works_with_async() async throws {
+        struct BinResponse : Codable{
+            let args:[String:String]
+        }
+        
+        do {
+            let response:BinResponse = try await Http().call(.get, "https://httpbin.org/get?name=jordi", object: ["name" : "jordi"])
+            XCTAssertEqual("jordi?", response.args["name"])
+            XCTAssertTrue(true)
+        }catch{
+            print(error)
+            XCTFail()
+        }
+    }
+    
 }
