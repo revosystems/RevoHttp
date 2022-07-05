@@ -5,6 +5,7 @@ public class Http : NSObject {
     
     public static var debugMode = false
     var insecureUrlSession:InsecureUrlSession?
+    var timeout:Int?
     
     lazy var urlSession:URLSession = {
         URLSession.shared
@@ -128,6 +129,10 @@ public class Http : NSObject {
             }
         }
         
+        if let timeout = timeout {
+            request.timeout = TimeInterval(timeout)
+        }
+        
         guard let urlRequest  = request.generate() else {
             return then(HttpResponse(failed: "Invalid URL"))
         }
@@ -163,6 +168,7 @@ public class Http : NSObject {
         return self
     }
     
+    //MARK: URLSession
     public func with(session: URLSession) -> Self {
         urlSession = session
         return self
@@ -171,6 +177,11 @@ public class Http : NSObject {
     public func allowUnsecureUrls() -> Self {
         insecureUrlSession = InsecureUrlSession()
         urlSession = insecureUrlSession!.session
+        return self
+    }
+    
+    public func withTimeout(seconds:Int) -> Self {
+        self.timeout = seconds
         return self
     }
 }

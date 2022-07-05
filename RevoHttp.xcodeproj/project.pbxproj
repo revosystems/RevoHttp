@@ -97,7 +97,6 @@
 			isa = PBXGroup;
 			children = (
 				8D3B0C8523996BE0003C1847 /* HttpFake.swift */,
-				EAB991002863250E000C0CB5 /* HttpStaticExtension.swift */,
 			);
 			path = Fake;
 			sourceTree = "<group>";
@@ -151,6 +150,7 @@
 			children = (
 				8D3B0C8423996BCD003C1847 /* Fake */,
 				8DCA906823994DA600CF8984 /* Http.swift */,
+				EAB991002863250E000C0CB5 /* HttpStaticExtension.swift */,
 				8DCA906A23994E4500CF8984 /* HttpResponse.swift */,
 				8DCA906C23994ED800CF8984 /* HttpRequest.swift */,
 				8DCF23C524F6CA3100176B0C /* MultipartHttpRequest.swift */,
