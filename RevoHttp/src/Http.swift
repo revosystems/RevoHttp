@@ -6,6 +6,7 @@ public class Http : NSObject {
     public static var debugMode = false
     var insecureUrlSession:InsecureUrlSession?
     var timeout:Int?
+    var hmac:Hmac?
     
     lazy var urlSession:URLSession = {
         URLSession.shared
@@ -15,9 +16,6 @@ public class Http : NSObject {
         let header:String
         let privateKey:String
     }
-    
-    var hmac:Hmac?
-    
     
     //MARK: - Call
     public func call(_ method:HttpRequest.Method, url:String, params:[String:Codable] = [:], headers:[String:String] = [:], then:@escaping(_ response:HttpResponse) -> Void) {
@@ -49,19 +47,9 @@ public class Http : NSObject {
     }
     
     //MARK: Async call
-    public func call<T:Codable,Z:Codable>(_ method:HttpRequest.Method, _ url:String, object:Z? = nil, headers:[String:String] = [:]) async throws -> T {
+    public func call<T:Codable>(_ method:HttpRequest.Method, _ url:String, params:[String:Codable] = [:], headers:[String:String] = [:]) async throws -> T {
         return try await withCheckedThrowingContinuation { continuation in
-            let request = HttpRequest(method: method, url: url, headers: headers)
-            
-            if let object = object {
-                guard let data = try? JSONEncoder().encode(object) else {
-                    return continuation.resume(throwing: HttpError.invalidParams)
-                }
-                guard let body = String(data:data, encoding: .utf8) else {
-                    return continuation.resume(throwing: HttpError.invalidParams)
-                }
-                request.body = body
-            }
+            let request = HttpRequest(method: method, url: url, params:params, headers: headers)
                     
             call(request) { response in
                 print(response.toString)

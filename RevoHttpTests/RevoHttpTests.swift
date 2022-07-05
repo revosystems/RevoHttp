@@ -224,8 +224,8 @@ class RevoHttpTests: XCTestCase {
         }
         
         do {
-            let response:BinResponse = try await Http().call(.get, "https://httpbin.org/get?name=jordi", object: ["name" : "jordi"])
-            XCTAssertEqual("jordi?", response.args["name"])
+            let response:BinResponse = try await Http().call(.get, "https://httpbin.org/get", params: ["name" : "jordi"])
+            XCTAssertEqual("jordi", response.args["name"])
             XCTAssertTrue(true)
         }catch{
             print(error)
