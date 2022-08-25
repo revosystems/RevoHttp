@@ -11,6 +11,10 @@ extension Http {
         Http().call(method, url, body: body, headers: headers, then: then)
     }
     
+    public static func call<T:Codable,Z:Encodable>(_ method:HttpRequest.Method, _ url:String, json:Z, headers:[String:String] = [:], then:@escaping(_ response:T?, _ error:String?) -> Void) {
+        Http().call(method, url, json:json, headers:headers, then:then)
+    }
+    
     public static func get(_ url:String, params:[String:Codable] = [:], headers:[String:String] = [:], then:@escaping(_ response:HttpResponse) -> Void) {
         let request = HttpRequest(method: .get, url: url, params: params, headers: headers)
         Http().call(request, then:then)
