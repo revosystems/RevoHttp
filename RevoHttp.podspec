@@ -3,7 +3,7 @@
 Pod::Spec.new do |spec|
 
   spec.name         = "RevoHttp"
-  spec.version      = "0.3.2"
+  spec.version      = "0.3.3"
   spec.summary      = "Foundation http."
 
   spec.description  = "A wrapper arround native Http requests for simpler and cleaner code"
@@ -39,7 +39,7 @@ Pod::Spec.new do |spec|
 
   # ――― Source Location ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
 
-  spec.source       = { :git => "https://github.com/revosystems/revohttp.git", :tag => "0.3.2" }
+  spec.source       = { :git => "https://github.com/revosystems/revohttp.git", :tag => "0.3.3" }
 
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
