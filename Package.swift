@@ -19,10 +19,10 @@ let package = Package(
     targets: [
         .target(
             name: "Http",
-            path: "RevoHttp/src",
             dependencies: [
-                .product(name: "RevoFoundation", package: "foundation")
-            ]
+               .product(name: "RevoFoundation", package: "foundation")
+            ],
+            path: "RevoHttp/src"
         ),
         .testTarget(
             name: "HttpTests",
