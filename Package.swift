@@ -17,8 +17,8 @@ let package = Package(
         .package(
             name:"RevoFoundation", 
             url: "https://github.com/revosystems/foundation", 
-            exact: "0.2.22"
-        )
+            .exact("0.2.22")
+        ),
     ],
     targets: [
         .target(
