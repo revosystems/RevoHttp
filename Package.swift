@@ -14,14 +14,16 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/revosystems/foundation", from: "0.2.22")
+        .package(
+            name:"RevoFoundation", 
+            url: "https://github.com/revosystems/foundation", 
+            exact: "0.2.22"
+        )
     ],
     targets: [
         .target(
             name: "Http",
-            dependencies: [
-               .product(name: "RevoFoundation", package: "foundation")
-            ],
+            dependencies: ["RevoFoundation"],
             path: "RevoHttp/src"
         ),
         .testTarget(
