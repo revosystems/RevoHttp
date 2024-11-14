@@ -2,33 +2,32 @@
 import PackageDescription
 
 let package = Package(
-    name: "Http",
+    name: "RevoHttp",
     platforms: [
         .iOS(.v13),
         .macOS(.v11)
     ],
     products: [
         .library(
-            name: "Http",
-            targets: ["Http"]
+            name: "RevoHttp",
+            targets: ["RevoHttp"]
         )
     ],
     dependencies: [
         .package(
             name:"RevoFoundation", 
-            url: "https://github.com/revosystems/foundation", 
-            .exact("0.2.22")
+            url: "https://github.com/revosystems/foundation", .upToMinor(from: "0.3.1")
         ),
     ],
     targets: [
         .target(
-            name: "Http",
+            name: "RevoHttp",
             dependencies: ["RevoFoundation"],
             path: "RevoHttp/src"
         ),
         .testTarget(
-            name: "HttpTests",
-            dependencies: ["Http"]
+            name: "RevoHttpTests",
+            dependencies: ["RevoHttp"]
         ),
     ]
 )
