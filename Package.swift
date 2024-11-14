@@ -16,7 +16,7 @@ let package = Package(
     dependencies: [
         .package(
             name:"RevoFoundation", 
-            url: "https://github.com/revosystems/foundation", .upToMinor(from: "0.3.1")
+            url: "https://github.com/revosystems/foundation", .upToNextMinor(from: "0.3.1")
         ),
     ],
     targets: [
