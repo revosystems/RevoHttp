@@ -29,6 +29,20 @@ public class Http : NSObject {
         call(request, then:then)
     }
     
+    public func call<Z:Encodable>(_ method:HttpRequest.Method, _ url:String, json:Z, headers:[String:String] = [:], then:@escaping(_ response:HttpResponse) -> Void) {
+        let request = HttpRequest(method: method, url: url, headers: headers)
+    
+        guard let data = try? JSONEncoder().encode(json) else {
+            return then(HttpResponse(failed: "Request not Encodable"))
+        }
+        guard let body = String(data:data, encoding: .utf8) else {
+            return then(HttpResponse(failed: "Can't encode request data to string"))
+        }
+        request.body = body
+                
+        call(request, then: then)
+    }
+    
     public func call<T:Codable,Z:Encodable>(_ method:HttpRequest.Method, _ url:String, json:Z, headers:[String:String] = [:], then:@escaping(_ response:T?, _ error:String?) -> Void) {
         let request = HttpRequest(method: method, url: url, headers: headers)
     
