@@ -150,9 +150,9 @@
 		8DCA906723994D8700CF8984 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				EAF950432ED5BE5600F3145A /* Http+Async.swift */,
 				8D3B0C8423996BCD003C1847 /* Fake */,
 				8DCA906823994DA600CF8984 /* Http.swift */,
+				EAF950432ED5BE5600F3145A /* Http+Async.swift */,
 				EAB991002863250E000C0CB5 /* HttpStaticExtension.swift */,
 				8DCA906A23994E4500CF8984 /* HttpResponse.swift */,
 				8DCA906C23994ED800CF8984 /* HttpRequest.swift */,
