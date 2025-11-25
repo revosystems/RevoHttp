@@ -21,7 +21,9 @@ let package = Package(
     targets: [
         .target(
             name: "RevoHttp",
-            dependencies: ["foundation"]
+            dependencies: [
+                .product(name: "RevoFoundation", package: "foundation")
+            ]
         ),
         .testTarget(
             name: "RevoHttpTests",

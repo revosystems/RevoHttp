@@ -10,11 +10,11 @@ public enum HttpError : Error {
     
     var localizedDescription: String {
         switch self {
-        case .invalidUrl: return "Malformed Url"
-        case .invalidParams: return "Invalid input params"
-        case .responseError: return "Response returned and error"
-        case .reponseStatusError: return "Response returned a non 200 status"
-        case .undecodableResponse: return "Undecodable response"
+        case .invalidUrl:           "Malformed Url"
+        case .invalidParams:        "Invalid input params"
+        case .responseError:        "Response returned and error"
+        case .reponseStatusError:   "Response returned a non 200 status"
+        case .undecodableResponse:  "Undecodable response"
         
         }
     }

@@ -72,8 +72,9 @@ public class HttpRequest : NSObject {
             result = result + "-d \"\(p)\""
         }
         
-        let h = headers.map { key, value in
-            "-H \"\(key): \(value)\""
+        let h = headers.keys.sorted().compactMap { key in
+            guard let value = headers[key] else { return nil }
+            return "-H \"\(key): \(value)\""
         }.implode(" ")
         
         if (h.count > 0){
@@ -84,7 +85,7 @@ public class HttpRequest : NSObject {
     }
     
     public func toString() -> String {
-        return ""
+        ""
     }
     
     var methodUppercased: String {
@@ -99,14 +100,13 @@ public protocol HttpParamProtocol {
 extension Dictionary : HttpParamProtocol{
     public func createParams(_ key: String?) -> [HttpParam] {
         var collect = [HttpParam]()
-        for (k, v) in self {
-            if let nestedKey = k as? String {
-                let useKey = key != nil ? "\(key!)[\(nestedKey)]" : nestedKey
-                if let subParam = v as? HttpParamProtocol {
-                    collect.append(contentsOf: subParam.createParams(useKey))
-                } else {
-                    collect.append(HttpParam(key: useKey, storedValue: v as AnyObject))
-                }
+        for k in self.keys.compactMap({ $0 as? String }).sorted() {
+            guard let k = k as? Key else { continue }
+            let useKey = key != nil ? "\(key!)[\(k)]" : "\(k)"
+            if let subParam = self[k] as? HttpParamProtocol {
+                collect.append(contentsOf: subParam.createParams(useKey))
+            } else {
+                collect.append(HttpParam(key: useKey, storedValue: self[k] as AnyObject))
             }
         }
         return collect
@@ -120,14 +120,11 @@ public struct HttpParam{
     var value: String {
         if storedValue is NSNull {
             return ""
-        } else if let v = storedValue as? String {
-            return v
-        } else {
-            return storedValue.description ?? ""
         }
+        return storedValue as? String ?? storedValue.description ?? ""
     }
         
     public func encoded(urlEncoded:Bool = false) -> String {
-        urlEncoded ? "\(key)=\(value.urlEncoded() ?? "")" : "\(key)=\(value)"
+        "\(key)=\(urlEncoded ? value.urlEncoded() ?? "" : value)"
     }
 }
