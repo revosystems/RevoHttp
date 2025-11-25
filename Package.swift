@@ -1,4 +1,4 @@
-// swift-tools-version:5.5
+// swift-tools-version:5.10
 import PackageDescription
 
 let package = Package(
@@ -15,15 +15,13 @@ let package = Package(
     ],
     dependencies: [
         .package(
-            name:"RevoFoundation", 
             url: "https://github.com/revosystems/foundation", .upToNextMinor(from: "0.3.1")
         ),
     ],
     targets: [
         .target(
             name: "RevoHttp",
-            dependencies: ["RevoFoundation"],
-            path: "RevoHttp/src"
+            dependencies: ["foundation"]
         ),
         .testTarget(
             name: "RevoHttpTests",
