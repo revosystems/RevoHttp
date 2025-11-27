@@ -1,7 +1,7 @@
 import Foundation
 import RevoFoundation
 
-public class HttpRequest : NSObject {
+public class HttpRequest : NSObject, @unchecked Sendable {
 
     public enum Method {
         case get, post, patch, put, delete

@@ -1,7 +1,7 @@
 import Foundation
 import RevoFoundation
 
-public class Http : NSObject {
+public class Http : NSObject, Resolvable, @unchecked Sendable {
     
     nonisolated(unsafe) public static var debugMode = false
     var insecureUrlSession:InsecureUrlSession?
@@ -16,6 +16,8 @@ public class Http : NSObject {
         let header:String
         let privateKey:String
     }
+    
+    override public required init() {}
     
     //MARK: - Call
     public func call(_ method:HttpRequest.Method, url:String, params:[String:Codable] = [:], headers:[String:String] = [:], then:@escaping(_ response:HttpResponse) -> Void) {
@@ -170,6 +172,36 @@ public class Http : NSObject {
 
 
 extension Http {
+    public func call(_ method:HttpRequest.Method, url:String, params:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
+        await call(HttpRequest(method: method, url: url, params: params, headers: headers))
+    }
+    
+    public func call(_ method:HttpRequest.Method, _ url:String, body:String, headers:[String:String] = [:]) async -> HttpResponse {
+        let request = HttpRequest(method: method, url: url, headers: headers)
+        request.body = body
+        return await call(request)
+    }
+    
+    public func call<Z:Encodable>(_ method:HttpRequest.Method, _ url:String, json:Z, headers:[String:String] = [:]) async -> HttpResponse {
+        let request = HttpRequest(method: method, url: url, headers: headers)
+    
+        guard let data = try? JSONEncoder().encode(json) else {
+            return HttpResponse(failed: "Request not Encodable")
+        }
+        guard let body = String(data:data, encoding: .utf8) else {
+            return HttpResponse(failed: "Can't encode request data to string")
+        }
+        request.body = body
+                
+        return await call(request)
+    }
+    
+    public func call<T:Codable,Z:Encodable>(_ method:HttpRequest.Method, _ url:String, json:Z, headers:[String:String] = [:]) async -> (T?, String?) {
+        let response = await call(method, url, json: json, headers: headers)
+        let result:T? = response.decoded()
+        return (result, response.error?.localizedDescription)
+    }
+    
     public func call<T:Codable>(_ method:HttpRequest.Method, _ url:String, params:[String:Codable] = [:], headers:[String:String] = [:]) async throws(HttpError) -> T {
         let response = await call(HttpRequest(method: method, url: url, params:params, headers: headers))
         print(response.toString)
