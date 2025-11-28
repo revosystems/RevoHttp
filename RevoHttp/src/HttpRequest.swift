@@ -52,10 +52,6 @@ public class HttpRequest : NSObject {
         self.headers     = headers
     }
 
-    convenience public init(method: Method, url: String, queryParams: HttpParamProtocol = [:], form: HttpParamProtocol = [:], headers: [String: String] = [:]) {
-        self.init(method: method, url: url, queryParams: queryParams, body: .form(form.createParams(nil)), headers: headers)
-    }
-
     convenience public init(method: Method, url: String) {
         self.init(method: method, url: url)
     }
@@ -71,8 +67,12 @@ public class HttpRequest : NSObject {
     convenience public init(method: Method, url: String, queryParams: HttpParamProtocol = [:], body: String? = nil, headers: [String:String] = [:]) {
         self.init(method: method, url: url, queryParams: queryParams, body: .json(body), headers: headers)
     }
-    
-    @available(*, deprecated, message: "'params' is deprecated. Use 'queryParams' of body 'form' instead.")
+
+    convenience public init(method: Method, url: String, queryParams: HttpParamProtocol = [:], form: HttpParamProtocol = [:], headers: [String: String] = [:]) {
+        self.init(method: method, url: url, queryParams: queryParams, body: .form(form.createParams(nil)), headers: headers)
+    }
+
+    @available(*, deprecated, message: "'params' is deprecated. Use 'queryParams' or body 'form' instead.")
     convenience public init(method: Method, url: String, params: HttpParamProtocol = [:], body: String? = nil, headers: [String:String] = [:]) {
         if method == .get {
             self.init(method: method, url: url, queryParams: params, headers: headers)
@@ -99,7 +99,7 @@ public class HttpRequest : NSObject {
             case .json(let string?) where !string.isEmpty && string != "{}":
                 return string.data(using: .utf8)
             case .form(let params?) where !params.isEmpty:
-                return buildBody()?.data(using: .utf8)
+                return buildFormBody()?.data(using: .utf8)
             default:
                 return nil
             }
@@ -108,14 +108,6 @@ public class HttpRequest : NSObject {
         addHeaders(&request)
         
         return request
-    }
-
-    public func buildBody() -> String? {
-        guard case .form(let params?) = bodyStruct else {
-            return nil
-        }
-
-        return buildParams(params, true)
     }
 
     private func buildParams(_ params: [HttpParam], _ encoded: Bool = false) -> String {
@@ -133,7 +125,15 @@ public class HttpRequest : NSObject {
     private func buildQueryParams(_ encoded: Bool = false) -> String {
         buildParams(queryParams, encoded)
     }
-    
+
+    public func buildFormBody() -> String? {
+        guard case .form(let params?) = bodyStruct else {
+            return nil
+        }
+
+        return buildParams(params, true)
+    }
+
     private func addHeaders(_ request:inout URLRequest){
         headers.forEach { key, value in
             request.setValue(value, forHTTPHeaderField: key)

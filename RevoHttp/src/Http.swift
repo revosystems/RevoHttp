@@ -138,7 +138,7 @@ public class Http : NSObject {
         }
         
         if let hmac = hmac {
-            if let hash = request.buildBody()?.hmac256(hmac.privateKey) {
+            if let hash = request.buildFormBody()?.hmac256(hmac.privateKey) {
                 request.headers[hmac.header] = hash
             }
         }
