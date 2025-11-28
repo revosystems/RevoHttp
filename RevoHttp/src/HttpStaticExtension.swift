@@ -1,8 +1,15 @@
-
 import Foundation
 
 extension Http {
-    
+
+    public static func call(_ method: HttpRequest.Method, url: String, queryParams: [String:Codable] = [:], body: String? = nil, headers: [String:String] = [:], timeout: Int = 30, then:@escaping(_ response:HttpResponse) -> Void) {
+        Http().call(method, url: url, queryParams: queryParams, body: body, headers: headers, timeout: timeout, then: then)
+    }
+
+    public static func call(_ method: HttpRequest.Method, url: String, queryParams: [String:Codable] = [:], form: [String:Codable] = [:], headers: [String:String] = [:], timeout: Int = 30, then:@escaping(_ response:HttpResponse) -> Void) {
+        Http().call(method, url: url, queryParams: queryParams, form: form, headers: headers, timeout: timeout, then: then)
+    }
+
     public static func call(_ method:HttpRequest.Method, url:String, params:[String:Codable] = [:], headers:[String:String] = [:], then:@escaping(_ response:HttpResponse) -> Void) {
         Http().call(method, url:url, params:params, headers:headers, then:then)
     }
