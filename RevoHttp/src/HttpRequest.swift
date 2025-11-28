@@ -6,20 +6,79 @@ public class HttpRequest : NSObject {
     public enum Method {
         case get, post, patch, put, delete
     }
+
+    public enum BodyStruct {
+        case form([HttpParam]?)
+        case json(String?)
+    }
+
+    public var method: Method
+    public var url: String
+    public var queryParams: [HttpParam]
+    public var bodyStruct: BodyStruct?
+    public var headers: [String: String]
+
+    public var body: String? { // deprecated
+        get {
+            switch bodyStruct {
+            case .json(let string):
+                return string
+            default:
+                return nil
+            }
+        }
+        set {
+            if let newValue = newValue {
+                bodyStruct = .json(newValue)
+            } else {
+                bodyStruct = nil
+            }
+        }
+    }
+
+    public var timeout: TimeInterval?
     
-    public var method  :Method
-    public var url     :String
-    public var params  :[HttpParam]
-    public var headers :[String: String]
-    public var body    :String?
+    public init(
+        method: Method,
+        url: String,
+        queryParams: HttpParamProtocol = [:],
+        body: BodyStruct? = nil,
+        headers: [String: String] = [:]
+    ) {
+        self.method      = method
+        self.url         = url
+        self.queryParams = queryParams.createParams(nil)
+        self.bodyStruct  = body
+        self.headers     = headers
+    }
+
+    convenience public init(method: Method, url: String, queryParams: HttpParamProtocol = [:], form: HttpParamProtocol = [:], headers: [String: String] = [:]) {
+        self.init(method: method, url: url, queryParams: queryParams, body: .form(form.createParams(nil)), headers: headers)
+    }
+
+    convenience public init(method: Method, url: String) {
+        self.init(method: method, url: url)
+    }
+
+    convenience public init(method: Method, url: String, headers: [String:String] = [:]) {
+        self.init(method: method, url: url, headers: headers)
+    }
+
+    convenience public init(method: Method, url: String, queryParams: HttpParamProtocol = [:], headers: [String:String] = [:]) {
+        self.init(method: method, url: url, queryParams: queryParams, headers: headers)
+    }
+
+    convenience public init(method: Method, url: String, queryParams: HttpParamProtocol = [:], body: String? = nil, headers: [String:String] = [:]) {
+        self.init(method: method, url: url, queryParams: queryParams, body: .json(body), headers: headers)
+    }
     
-    public var timeout:TimeInterval?
-    
-    public init(method:Method, url:String, params:HttpParamProtocol = [:], headers:[String:String] = [:]){
-        self.method  = method
-        self.url     = url
-        self.params  = params.createParams(nil)
-        self.headers = headers
+    @available(*, deprecated, message: "'params' is deprecated. Use 'queryParams' of body 'form' instead.")
+    convenience public init(method: Method, url: String, params: HttpParamProtocol = [:], body: String? = nil, headers: [String:String] = [:]) {
+        if method == .get {
+            self.init(method: method, url: url, queryParams: params, headers: headers)
+            return
+        }
+        self.init(method: method, url: url, form: params, headers: headers)
     }
     
     public func generate() -> URLRequest? {
@@ -32,27 +91,47 @@ public class HttpRequest : NSObject {
         if let timeout = self.timeout {
             request.timeoutInterval = timeout
         }
-        
-        if (method == .get){
-            request.url = URL(string: buildUrl())
-        } else {
-            request.httpBody = (body ?? buildBody()).data(using: .utf8)
+
+        request.url = URL(string: buildUrl())
+
+        request.httpBody = bodyStruct.flatMap { body -> Data? in
+            switch body {
+            case .json(let string?) where !string.isEmpty && string != "{}":
+                return string.data(using: .utf8)
+            case .form(let params?) where !params.isEmpty:
+                return buildBody()?.data(using: .utf8)
+            default:
+                return nil
+            }
         }
-        
+
         addHeaders(&request)
         
         return request
     }
-    
-    func buildBody(_ encoded:Bool = false) -> String {
-        return params.map { param in
+
+    public func buildBody() -> String? {
+        guard case .form(let params?) = bodyStruct else {
+            return nil
+        }
+
+        return buildParams(params, true)
+    }
+
+    private func buildParams(_ params: [HttpParam], _ encoded: Bool = false) -> String {
+        params.map { param in
             param.encoded(urlEncoded: encoded)
         }.implode("&")
     }
-    
-    
+
     private func buildUrl() -> String {
-        url + "?" + buildBody(true)
+        queryParams.isEmpty
+            ? url
+            : "\(url)?\(buildQueryParams(true))"
+    }
+
+    private func buildQueryParams(_ encoded: Bool = false) -> String {
+        buildParams(queryParams, encoded)
     }
     
     private func addHeaders(_ request:inout URLRequest){
@@ -64,7 +143,14 @@ public class HttpRequest : NSObject {
     
     public func toCurl() -> String {
         var result = "curl "
-        let p = params.map { param in
+        var parameters: [HttpParam] = []
+
+        if case .form(let params?) = bodyStruct {
+            parameters = params
+        } else {
+            parameters = queryParams
+        }
+        let p = parameters.map { param in
             param.encoded()
         }.implode("&")
         
@@ -127,7 +213,7 @@ public struct HttpParam{
         }
     }
         
-    public func encoded(urlEncoded:Bool = false) -> String {
+    public func encoded(urlEncoded: Bool = false) -> String {
         urlEncoded ? "\(key)=\(value.urlEncoded() ?? "")" : "\(key)=\(value)"
     }
 }
