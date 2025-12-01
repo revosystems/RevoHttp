@@ -6,7 +6,6 @@ target 'RevoHttp' do
   #use_frameworks!
 
   # Pods for RevoHttp
-  pod 'RevoFoundation' 
 
   target 'RevoHttpTests' do
     inherit! :search_paths

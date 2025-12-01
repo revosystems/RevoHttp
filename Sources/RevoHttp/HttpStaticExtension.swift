@@ -1,6 +1,5 @@
 
 import Foundation
-import RevoFoundation
 
 extension Http {
     private static func httpInstance() async -> Http {

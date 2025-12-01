@@ -1,5 +1,4 @@
 import Foundation
-import RevoFoundation
 
 public class HttpRequest : NSObject, @unchecked Sendable {
 
@@ -45,9 +44,9 @@ public class HttpRequest : NSObject, @unchecked Sendable {
     }
     
     func buildBody(_ encoded:Bool = false) -> String {
-        return params.map { param in
-            param.encoded(urlEncoded: encoded)
-        }.implode("&")
+        params.map {
+            $0.encoded(urlEncoded: encoded)
+        }.joined(separator: "&")
     }
     
     
@@ -64,21 +63,21 @@ public class HttpRequest : NSObject, @unchecked Sendable {
     
     public func toCurl() -> String {
         var result = "curl "
-        let p = params.map { param in
-            param.encoded()
-        }.implode("&")
+        let p = params.map {
+            $0.encoded()
+        }.joined(separator: "&")
         
         if (p.count > 0) {
-            result = result + "-d \"\(p)\""
+            result += "-d \"\(p)\""
         }
         
         let h = headers.keys.sorted().compactMap { key in
             guard let value = headers[key] else { return nil }
             return "-H \"\(key): \(value)\""
-        }.implode(" ")
+        }.joined(separator: " ")
         
         if (h.count > 0){
-            result = result + " \(h)"
+            result += " \(h)"
         }
         
         return result + " -X \(methodUppercased) \(url)"
@@ -125,6 +124,6 @@ public struct HttpParam{
     }
         
     public func encoded(urlEncoded:Bool = false) -> String {
-        "\(key)=\(urlEncoded ? value.urlEncoded() ?? "" : value)"
+        "\(key)=\(urlEncoded ? value.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? "" : value)"
     }
 }

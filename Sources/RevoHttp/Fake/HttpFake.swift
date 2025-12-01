@@ -1,5 +1,4 @@
 import Foundation
-import RevoFoundation
 
 actor HttpFakeState {
     var calls: [HttpRequest] = []
@@ -21,10 +20,11 @@ actor HttpFakeState {
     }
     
     func getGlobalResponse() -> HttpResponse? {
-        if globalResponses.count == 1 {
-            return globalResponses.first
+        guard let first = globalResponses.first else { return nil }
+        if globalResponses.count > 1 {
+            globalResponses.removeFirst()
         }
-        return globalResponses.pop()
+        return first
     }
     
     func addResponse(_ response: HttpResponse, for url: String?) {
@@ -94,7 +94,7 @@ public class HttpFake : Http, @unchecked Sendable {
     }
         
     public func addResponse<T:Codable>(for url:String? = nil, encoded response:T, status:Int = 200) async {
-        let data = try! response.encode()
+        let data = try! JSONEncoder().encode(response)
         let httpResponse    = HTTPURLResponse(url: URL(string:"http://fakeUrl.com")!, statusCode: status, httpVersion: "1.0", headerFields: nil)
         let httpResponseObj = HttpResponse(data:data, response:httpResponse , error: nil)
         await state.addResponse(httpResponseObj, for: url)

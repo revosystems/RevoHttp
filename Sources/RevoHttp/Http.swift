@@ -1,5 +1,4 @@
 import Foundation
-import RevoFoundation
 
 public class Http : NSObject, Resolvable, @unchecked Sendable {
     
@@ -89,7 +88,7 @@ public class Http : NSObject, Resolvable, @unchecked Sendable {
     @objc dynamic public func callMultipart(_ request:MultipartHttpRequest) async -> HttpResponse {
         debugIfNeeded(request)
         
-        guard let urlRequest  = request.generate() else {
+        guard let urlRequest = request.generate() else {
             return HttpResponse(failed: "Invalid URL")
         }
         
@@ -147,5 +146,18 @@ public class Http : NSObject, Resolvable, @unchecked Sendable {
     private func debugIfNeeded(_ request: HttpRequest) {
         guard Self.debugMode else { return }
         debugPrint("****** HTTP DEBUG ****** " + request.toCurl())
+    }
+}
+
+
+import CryptoKit
+extension String {
+    func hmac256(_ key:String) -> String? {
+        guard let messageData = self.data(using: .utf8), let keyData = key.data(using: .utf8) else {
+            return nil
+        }
+        
+        let code = HMAC<SHA256>.authenticationCode(for: messageData, using: SymmetricKey(data: keyData))
+        return Data(code).map { String(format: "%02hhx", $0) }.joined()
     }
 }
