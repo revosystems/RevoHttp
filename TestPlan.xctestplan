@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "A69C2F0A-7A1A-40D5-8004-F3D3451EE8B9",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "RevoHttpTests",
+        "name" : "RevoHttpTests"
+      }
+    }
+  ],
+  "version" : 1
+}

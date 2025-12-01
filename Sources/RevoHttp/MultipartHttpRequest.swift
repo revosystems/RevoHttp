@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-public class MultipartHttpRequest : HttpRequest {
+public class MultipartHttpRequest : HttpRequest, @unchecked Sendable {
     
     var paramName:String?
     var fileName:String?

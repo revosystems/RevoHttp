@@ -51,7 +51,7 @@ public class HttpRequest : NSObject, @unchecked Sendable {
     }
     
     
-    private func buildUrl() -> String {
+    func buildUrl() -> String {
         url + "?" + buildBody(true)
     }
     

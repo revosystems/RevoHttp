@@ -2,12 +2,12 @@ import Foundation
 import Testing
 @testable import RevoHttp
 
-@Suite(.serialized) // HttpFakeAsync instances are not isolated !!
-struct HttpFakeAsyncTests {
+@Suite(.serialized) // HttpFake instances are not isolated !!
+struct HttpFakeTests {
     
-    @Test("HttpFakeAsync can be enabled and disabled safely")
+    @Test("HttpFake can be enabled and disabled safely")
     func testEnableDisable() async throws {
-        let fake = HttpFakeAsync()
+        let fake = HttpFake()
         
         await fake.enable()
         await fake.disable()
@@ -17,9 +17,9 @@ struct HttpFakeAsyncTests {
         await fake.disable()
     }
     
-    @Test("HttpFakeAsync resets state when enabled")
+    @Test("HttpFake resets state when enabled")
     func testResetOnEnable() async throws {
-        let fake = HttpFakeAsync()
+        let fake = HttpFake()
         await fake.enable()
         
         // Add some responses and make calls
@@ -44,9 +44,9 @@ struct HttpFakeAsyncTests {
         #expect(await fake.responses.count == 0)
     }
     
-    @Test("HttpFakeAsync resets state when disabled")
+    @Test("HttpFake resets state when disabled")
     func testResetOnDisable() async throws {
-        let fake = HttpFakeAsync()
+        let fake = HttpFake()
         await fake.enable()
         
         // Add some responses and make calls
@@ -71,9 +71,9 @@ struct HttpFakeAsyncTests {
         #expect(await fake.responses.count == 0)
     }
     
-    @Test("HttpFakeAsync tracks calls correctly")
+    @Test("HttpFake tracks calls correctly")
     func testCallTracking() async throws {
-        let fake = HttpFakeAsync()
+        let fake = HttpFake()
         await fake.enable()
         
         let request1 = HttpRequest(method: .get, url: "https://example.com/1")
@@ -87,9 +87,9 @@ struct HttpFakeAsyncTests {
         #expect(await fake.calls[1].url == "https://example.com/2")
     }
     
-    @Test("HttpFakeAsync returns URL-specific response when available")
+    @Test("HttpFake returns URL-specific response when available")
     func testUrlSpecificResponse() async throws {
-        let fake = HttpFakeAsync()
+        let fake = HttpFake()
         await fake.enable()
         
         await fake.addResponse(for: "https://example.com/specific", "specific response")
@@ -101,9 +101,9 @@ struct HttpFakeAsyncTests {
         #expect(specificResponse == "specific response")
     }
     
-    @Test("HttpFakeAsync returns global response when no URL-specific response")
+    @Test("HttpFake returns global response when no URL-specific response")
     func testGlobalResponse() async throws {
-        let fake = HttpFakeAsync()
+        let fake = HttpFake()
         await fake.enable()
         
         await fake.addResponse("first global")
@@ -118,9 +118,9 @@ struct HttpFakeAsyncTests {
         #expect(response2 == "second global")
     }
     
-    @Test("HttpFakeAsync reuses single global response")
+    @Test("HttpFake reuses single global response")
     func testSingleGlobalResponseReuse() async throws {
-        let fake = HttpFakeAsync()
+        let fake = HttpFake()
         await fake.enable()
         
         await fake.addResponse("single response")
@@ -135,9 +135,9 @@ struct HttpFakeAsyncTests {
         #expect(response2 == "single response")
     }
     
-    @Test("HttpFakeAsync returns empty response when no responses configured")
+    @Test("HttpFake returns empty response when no responses configured")
     func testEmptyResponseWhenNoResponses() async throws {
-        let fake = HttpFakeAsync()
+        let fake = HttpFake()
         await fake.enable()
         
         let request = HttpRequest(method: .get, url: "https://example.com")
@@ -149,14 +149,14 @@ struct HttpFakeAsyncTests {
         #expect(response.error == nil)
     }
     
-    @Test("HttpFakeAsync can add encoded responses")
+    @Test("HttpFake can add encoded responses")
     func testEncodedResponse() async throws {
         struct TestResponse: Codable {
             let name: String
             let value: Int
         }
         
-        let fake = HttpFakeAsync()
+        let fake = HttpFake()
         await fake.enable()
         
         let testData = TestResponse(name: "test", value: 42)
@@ -169,13 +169,13 @@ struct HttpFakeAsyncTests {
         #expect(decodedResponse.value == 42)
     }
     
-    @Test("HttpFakeAsync can add URL-specific encoded responses")
+    @Test("HttpFake can add URL-specific encoded responses")
     func testUrlSpecificEncodedResponse() async throws {
         struct TestResponse: Codable {
             let id: Int
         }
         
-        let fake = HttpFakeAsync()
+        let fake = HttpFake()
         await fake.enable()
         
         await fake.addResponse(for: "https://api.example.com/user/1", encoded: TestResponse(id: 1))
@@ -191,9 +191,9 @@ struct HttpFakeAsyncTests {
         #expect(response2.id == 2)
     }
     
-    @Test("HttpFakeAsync can handle custom status codes")
+    @Test("HttpFake can handle custom status codes")
     func testCustomStatusCodes() async throws {
-        let fake = HttpFakeAsync()
+        let fake = HttpFake()
         await fake.enable()
         
         await fake.addResponse(for: "https://example.com/404", "not found", status: 404)
@@ -209,9 +209,9 @@ struct HttpFakeAsyncTests {
         #expect(status2 == 500)
     }
     
-    @Test("HttpFakeAsync can be safely used in parallel test scenarios")
+    @Test("HttpFake can be safely used in parallel test scenarios")
     func testParallelUsage() async throws {
-        let fake = HttpFakeAsync()
+        let fake = HttpFake()
         await fake.enable()
         
         // Add enough responses for concurrent calls
