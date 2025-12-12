@@ -42,43 +42,43 @@ public class HttpRequest : NSObject {
         method: Method,
         url: String,
         queryParams: HttpParamProtocol = [:],
-        body: BodyStruct? = nil,
+        bodyStruct: BodyStruct? = nil,
         headers: [String: String] = [:]
     ) {
         self.method      = method
         self.url         = url
         self.queryParams = queryParams.createParams(nil)
-        self.bodyStruct  = body
+        self.bodyStruct  = bodyStruct
         self.headers     = headers
     }
 
     convenience public init(method: Method, url: String) {
-        self.init(method: method, url: url)
+        self.init(method: method, url: url, queryParams: [:], bodyStruct: nil, headers: [:])
     }
 
     convenience public init(method: Method, url: String, headers: [String:String] = [:]) {
-        self.init(method: method, url: url, headers: headers)
+        self.init(method: method, url: url, queryParams: [:], bodyStruct: nil, headers: headers)
     }
 
     convenience public init(method: Method, url: String, queryParams: HttpParamProtocol = [:], headers: [String:String] = [:]) {
-        self.init(method: method, url: url, queryParams: queryParams, headers: headers)
+        self.init(method: method, url: url, queryParams: queryParams, bodyStruct: nil, headers: headers)
     }
 
     convenience public init(method: Method, url: String, queryParams: HttpParamProtocol = [:], body: String? = nil, headers: [String:String] = [:]) {
-        self.init(method: method, url: url, queryParams: queryParams, body: .json(body), headers: headers)
+        self.init(method: method, url: url, queryParams: queryParams, bodyStruct: .json(body), headers: headers)
     }
 
     convenience public init(method: Method, url: String, queryParams: HttpParamProtocol = [:], form: HttpParamProtocol = [:], headers: [String: String] = [:]) {
-        self.init(method: method, url: url, queryParams: queryParams, body: .form(form.createParams(nil)), headers: headers)
+        self.init(method: method, url: url, queryParams: queryParams, bodyStruct: .form(form.createParams(nil)), headers: headers)
     }
 
     @available(*, deprecated, message: "'params' is deprecated. Use 'queryParams' or body 'form' instead.")
     convenience public init(method: Method, url: String, params: HttpParamProtocol = [:], body: String? = nil, headers: [String:String] = [:]) {
         if method == .get {
-            self.init(method: method, url: url, queryParams: params, headers: headers)
+            self.init(method: method, url: url, queryParams: params, bodyStruct: nil, headers: headers)
             return
         }
-        self.init(method: method, url: url, form: params, headers: headers)
+        self.init(method: method, url: url, queryParams: [:], bodyStruct: .form(params.createParams(nil)), headers: headers)
     }
     
     public func generate() -> URLRequest? {
