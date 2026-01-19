@@ -126,12 +126,18 @@ public class HttpRequest : NSObject {
         buildParams(queryParams, encoded)
     }
 
+    private func buildFormParams(_ params: [HttpParam], _ encoded: Bool = false) -> String {
+        params.map { param in
+            param.formEncoded(urlEncoded: encoded)
+        }.implode("&")
+    }
+
     public func buildFormBody() -> String? {
         guard case .form(let params?) = bodyStruct else {
             return nil
         }
 
-        return buildParams(params, true)
+        return buildFormParams(params, true)
     }
 
     private func addHeaders(_ request:inout URLRequest){
@@ -215,5 +221,21 @@ public struct HttpParam{
         
     public func encoded(urlEncoded: Bool = false) -> String {
         urlEncoded ? "\(key)=\(value.urlEncoded() ?? "")" : "\(key)=\(value)"
+    }
+
+    public func formEncoded(urlEncoded: Bool = false) -> String {
+        urlEncoded ? "\(key)=\(value.formURLEncoded() ?? "")" : "\(key)=\(value)"
+    }
+}
+
+extension String {
+    func formURLEncoded() -> String {
+        let unreserved = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._*"
+        var allowed = CharacterSet()
+        allowed.insert(charactersIn: unreserved)
+
+        var encoded = self.addingPercentEncoding(withAllowedCharacters: allowed) ?? ""
+        encoded = encoded.replacingOccurrences(of: " ", with: "+")
+        return encoded
     }
 }
