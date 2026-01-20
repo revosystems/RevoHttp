@@ -132,7 +132,7 @@ public class HttpRequest : NSObject {
         }.implode("&")
     }
 
-    public func buildFormBody() -> String? {
+    private func buildFormBody() -> String? {
         guard case .form(let params?) = bodyStruct else {
             return nil
         }
@@ -219,11 +219,11 @@ public struct HttpParam{
         }
     }
         
-    public func encoded() -> String {
+    fileprivate func encoded() -> String {
         "\(key)=\(value.urlEncoded() ?? "")"
     }
 
-    public func formEncoded() -> String {
+    fileprivate func formEncoded() -> String {
         "\(key)=\(value.formURLEncoded() ?? "")"
     }
 }
