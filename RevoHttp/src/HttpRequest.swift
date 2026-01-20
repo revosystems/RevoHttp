@@ -110,25 +110,25 @@ public class HttpRequest : NSObject {
         return request
     }
 
-    private func buildParams(_ params: [HttpParam], _ encoded: Bool = false) -> String {
+    private func buildParams(_ params: [HttpParam]) -> String {
         params.map { param in
-            param.encoded(urlEncoded: encoded)
+            param.encoded()
         }.implode("&")
     }
 
     private func buildUrl() -> String {
         queryParams.isEmpty
             ? url
-            : "\(url)?\(buildQueryParams(true))"
+            : "\(url)?\(buildQueryParams())"
     }
 
-    private func buildQueryParams(_ encoded: Bool = false) -> String {
-        buildParams(queryParams, encoded)
+    private func buildQueryParams() -> String {
+        buildParams(queryParams)
     }
 
-    private func buildFormParams(_ params: [HttpParam], _ encoded: Bool = false) -> String {
+    private func buildFormParams(_ params: [HttpParam]) -> String {
         params.map { param in
-            param.formEncoded(urlEncoded: encoded)
+            param.formEncoded()
         }.implode("&")
     }
 
@@ -137,7 +137,7 @@ public class HttpRequest : NSObject {
             return nil
         }
 
-        return buildFormParams(params, true)
+        return buildFormParams(params)
     }
 
     private func addHeaders(_ request:inout URLRequest){
@@ -219,12 +219,12 @@ public struct HttpParam{
         }
     }
         
-    public func encoded(urlEncoded: Bool = false) -> String {
-        urlEncoded ? "\(key)=\(value.urlEncoded() ?? "")" : "\(key)=\(value)"
+    public func encoded() -> String {
+        "\(key)=\(value.urlEncoded() ?? "")"
     }
 
-    public func formEncoded(urlEncoded: Bool = false) -> String {
-        urlEncoded ? "\(key)=\(value.formURLEncoded() ?? "")" : "\(key)=\(value)"
+    public func formEncoded() -> String {
+        "\(key)=\(value.formURLEncoded() ?? "")"
     }
 }
 
