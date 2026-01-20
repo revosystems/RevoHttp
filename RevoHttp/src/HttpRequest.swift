@@ -11,6 +11,11 @@ public class HttpRequest : NSObject {
         case form([HttpParam]?)
         case json(String?)
     }
+    
+    public struct Hmac {
+        let header:String
+        let privateKey:String
+    }
 
     public var method: Method
     public var url: String
@@ -110,28 +115,49 @@ public class HttpRequest : NSObject {
         return request
     }
 
-    private func buildParams(_ params: [HttpParam], _ encoded: Bool = false) -> String {
+    public func withHmacHeader(_ hmac: Hmac) {
+        let payload: String
+        switch bodyStruct {
+        case .json(let string?):
+            payload = string
+        case .form:
+            payload = buildFormBody() ?? ""
+        default:
+            payload = buildQueryParams()
+        }
+        if !payload.isEmpty, let hash = payload.hmac256(hmac.privateKey) {
+            headers[hmac.header] = hash
+        }
+    }
+        
+    private func buildParams(_ params: [HttpParam]) -> String {
         params.map { param in
-            param.encoded(urlEncoded: encoded)
+            param.encoded()
         }.implode("&")
     }
 
     private func buildUrl() -> String {
         queryParams.isEmpty
             ? url
-            : "\(url)?\(buildQueryParams(true))"
+            : "\(url)?\(buildQueryParams())"
     }
 
-    private func buildQueryParams(_ encoded: Bool = false) -> String {
-        buildParams(queryParams, encoded)
+    private func buildQueryParams() -> String {
+        buildParams(queryParams)
     }
 
-    public func buildFormBody() -> String? {
+    private func buildFormParams(_ params: [HttpParam]) -> String {
+        params.map { param in
+            param.formEncoded()
+        }.implode("&")
+    }
+
+    private func buildFormBody() -> String? {
         guard case .form(let params?) = bodyStruct else {
             return nil
         }
 
-        return buildParams(params, true)
+        return buildFormParams(params)
     }
 
     private func addHeaders(_ request:inout URLRequest){
@@ -213,7 +239,23 @@ public struct HttpParam{
         }
     }
         
-    public func encoded(urlEncoded: Bool = false) -> String {
-        urlEncoded ? "\(key)=\(value.urlEncoded() ?? "")" : "\(key)=\(value)"
+    fileprivate func encoded() -> String {
+        "\(key)=\(value.urlEncoded() ?? "")"
+    }
+
+    fileprivate func formEncoded() -> String {
+        "\(key)=\(value.formURLEncoded() ?? "")"
+    }
+}
+
+extension String {
+    func formURLEncoded() -> String {
+        let unreserved = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._*"
+        var allowed = CharacterSet()
+        allowed.insert(charactersIn: unreserved)
+
+        var encoded = self.addingPercentEncoding(withAllowedCharacters: allowed) ?? ""
+        encoded = encoded.replacingOccurrences(of: " ", with: "+")
+        return encoded
     }
 }
