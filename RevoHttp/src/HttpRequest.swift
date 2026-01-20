@@ -11,6 +11,11 @@ public class HttpRequest : NSObject {
         case form([HttpParam]?)
         case json(String?)
     }
+    
+    public struct Hmac {
+        let header:String
+        let privateKey:String
+    }
 
     public var method: Method
     public var url: String
@@ -110,6 +115,21 @@ public class HttpRequest : NSObject {
         return request
     }
 
+    public func withHmacHeader(_ hmac: Hmac) {
+        let payload: String
+        switch bodyStruct {
+        case .json(let string?):
+            payload = string
+        case .form:
+            payload = buildFormBody() ?? ""
+        default:
+            payload = buildQueryParams()
+        }
+        if !payload.isEmpty, let hash = payload.hmac256(hmac.privateKey) {
+            headers[hmac.header] = hash
+        }
+    }
+        
     private func buildParams(_ params: [HttpParam]) -> String {
         params.map { param in
             param.encoded()

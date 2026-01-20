@@ -12,11 +12,8 @@ public class Http : NSObject {
         URLSession.shared
     }()
     
-    struct Hmac {
-        let header:String
-        let privateKey:String
-    }
-    
+    typealias Hmac = HttpRequest.Hmac
+
     //MARK: - Call
     public func call(_ method: HttpRequest.Method, url: String, queryParams: [String:Codable] = [:], body: String? = nil, headers: [String:String] = [:], timeout: Int = 30, then:@escaping(_ response: HttpResponse) -> Void) {
         let request = HttpRequest(method: method, url: url, queryParams: queryParams, body: body, headers: headers)
@@ -138,9 +135,7 @@ public class Http : NSObject {
         }
         
         if let hmac = hmac {
-            if let hash = request.buildFormBody()?.hmac256(hmac.privateKey) {
-                request.headers[hmac.header] = hash
-            }
+            request.withHmacHeader(hmac)
         }
         
         if let timeout = timeout {

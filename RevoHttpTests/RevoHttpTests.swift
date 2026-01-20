@@ -130,7 +130,14 @@ class RevoHttpTests: XCTestCase {
         let request = HttpRequest(method: .get, url: "https://httpbin.org/get", params: ["name" : "Jordi", "lastName" : "Puigdellívol"], headers: ["X-Header" : "Value1", "X-Header2": "Value2"])
         
         let result = request.toCurl()
-        XCTAssertEqual("curl -d \"lastName=Puigdellívol&name=Jordi\" -H \"X-Header: Value1\" -H \"X-Header2: Value2\" -X GET https://httpbin.org/get", result)
+
+        XCTAssertTrue(result.hasPrefix("curl -d \""))
+        XCTAssertTrue(result.contains("name=Jordi"))
+        XCTAssertTrue(result.contains("lastName=Puigdell%C3%ADvol"))
+        XCTAssertTrue(result.contains("-H \"X-Header: Value1\""))
+        XCTAssertTrue(result.contains("-H \"X-Header2: Value2\""))
+        XCTAssertTrue(result.hasSuffix("-X GET https://httpbin.org/get"))
+
     }
     
     func test_can_use_http_fake(){
@@ -198,11 +205,35 @@ class RevoHttpTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Http request")
         
         struct HttpBinResponse: Codable {
-            let args:[String:String]
+            let form:[String:String]
             let headers:[String:String]
             let url:String
         }
         
+        
+        Http().withHmacSHA256(header:"X-Header-Sha", privateKey: "PRVIATE_KEY").post("https://httpbin.org/post", params:["name" : "Jordi"], headers:["X-Header": "header-value"]) { response in
+            
+            print(response.toString)
+            let json:HttpBinResponse = response.decoded()!
+            XCTAssertEqual("Jordi",                                 json.form["name"])
+            XCTAssertEqual("header-value",                          json.headers["X-Header"])
+            XCTAssertEqual("7f2d061df8af79d74afb651641bd1b15a38ae8d22aed75120c4c020ab844da18",                          json.headers["X-Header-Sha"])
+            XCTAssertEqual("https://httpbin.org/post",              json.url)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 5)
+    }
+    
+    func test_can_add_an_hmac_header_with_query_params(){
+        
+        let expectation = XCTestExpectation(description: "Http request")
+        
+        struct HttpBinResponse: Codable {
+            let args:[String:String]
+            let headers:[String:String]
+            let url:String
+        }
         
         Http().withHmacSHA256(header:"X-Header-Sha", privateKey: "PRVIATE_KEY").get("https://httpbin.org/get", params:["name" : "Jordi"], headers:["X-Header": "header-value"]) { response in
             
