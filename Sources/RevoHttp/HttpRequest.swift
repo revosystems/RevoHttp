@@ -20,28 +20,14 @@ public class HttpRequest : NSObject, @unchecked Sendable {
     public var method: Method
     public var url: String
     public var queryParams: [HttpParam]
-    public var bodyStruct: BodyStruct?
-    public var headers: [String: String]
-
-    public var body: Encodable? { // deprecated
-        get {
-            switch bodyStruct {
-            case .json(let string):   string
-            case .string(let string): string
-            default:                  nil
-            }
-        }
-        set {
-            if let string = newValue as? String {
-                bodyStruct = .string(string)
-            } else if let newValue {
+    public var body: BodyStruct? {
+        didSet {
+            if case .json = body {
                 headers["Content-Type"] = "application/json"
-                bodyStruct = .json(newValue)
-            } else {
-                bodyStruct = nil
             }
         }
     }
+    public var headers: [String: String]
 
     public var timeout: TimeInterval?
     
@@ -55,7 +41,7 @@ public class HttpRequest : NSObject, @unchecked Sendable {
         self.method      = method
         self.url         = url
         self.queryParams = queryParams.createParams(nil)
-        self.bodyStruct  = bodyStruct
+        self.body  = bodyStruct
         self.headers     = headers
     }
 
@@ -101,7 +87,7 @@ public class HttpRequest : NSObject, @unchecked Sendable {
 
         request.url = URL(string: buildUrl())
 
-        request.httpBody = bodyStruct.flatMap { body -> Data? in
+        request.httpBody = body.flatMap { body -> Data? in
             switch body {
             case .json(let string?):
                 try? JSONEncoder().encode(string)
@@ -120,7 +106,7 @@ public class HttpRequest : NSObject, @unchecked Sendable {
     }
 
     public func withHmacHeader(_ hmac: Hmac) {
-        let payload = switch bodyStruct {
+        let payload = switch body {
         case .json(let encodable?):      String(data: try! JSONEncoder().encode(encodable), encoding: .utf8)!
             case .string(let string?): string
             case .form:              buildFormBody() ?? ""
@@ -154,7 +140,7 @@ public class HttpRequest : NSObject, @unchecked Sendable {
     }
 
     func buildFormBody() -> String? {
-        guard case .form(let params?) = bodyStruct else {
+        guard case .form(let params?) = body else {
             return nil
         }
 
@@ -172,7 +158,7 @@ public class HttpRequest : NSObject, @unchecked Sendable {
         var result = "curl "
         var parameters: [HttpParam] = []
 
-        if case .form(let params?) = bodyStruct {
+        if case .form(let params?) = body {
             parameters = params
         } else {
             parameters = queryParams

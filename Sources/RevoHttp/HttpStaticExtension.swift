@@ -42,7 +42,7 @@ extension Http {
     
     public static func post(_ url:String, body:String, headers:[String:String] = [:]) async -> HttpResponse {
         let request = HttpRequest(method: .post, url: url, headers: headers)
-        request.body = body
+        request.body = .string(body)
         return await httpInstance().call(request)
     }
     

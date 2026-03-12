@@ -43,7 +43,7 @@ struct HttpRequestTests {
     @Test("Can generate POST request with body")
     func testCanGeneratePostRequestWithBody() {
         let request = HttpRequest(method: .post, url: "https://httpbin.org/post")
-        request.body = "name=Jordi&age=30"
+        request.body = .string("name=Jordi&age=30")
         
         let urlRequest = request.generate()
         #expect(urlRequest?.httpMethod == "POST")
@@ -106,7 +106,7 @@ struct HttpRequestTests {
     @Test("Can handle request with body overriding params")
     func testCanHandleRequestWithBodyOverridingParams() {
         let request = HttpRequest(method: .post, url: "https://httpbin.org/post", queryParams: ["param1": "value1"])
-        request.body = "body=value"
+        request.body = .string("body=value")
         
         let urlRequest = request.generate()
         let bodyString = String(data: urlRequest!.httpBody!, encoding: .utf8)

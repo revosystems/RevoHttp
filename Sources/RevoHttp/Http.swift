@@ -22,13 +22,13 @@ public class Http : NSObject, Resolvable, @unchecked Sendable {
     
     public func call(_ method:HttpRequest.Method, _ url:String, body:String, headers:[String:String] = [:]) async -> HttpResponse {
         let request = HttpRequest(method: method, url: url, headers: headers)
-        request.body = body
+        request.body = .string(body)
         return await call(request)
     }
     
     public func call<Z:Encodable>(_ method:HttpRequest.Method, _ url:String, json:Z, headers:[String:String] = [:]) async -> HttpResponse {
         let request = HttpRequest(method: method, url: url, headers: headers)
-        request.body = json
+        request.body = .json(json)
         return await call(request)
     }
     
@@ -99,7 +99,7 @@ public class Http : NSObject, Resolvable, @unchecked Sendable {
     
     public func post(_ url:String, body:String, headers:[String:String] = [:]) async -> HttpResponse {
         let request = HttpRequest(method: .post, url: url, headers: headers)
-        request.body = body
+        request.body = .string(body)
         return await call(request)
     }
     
