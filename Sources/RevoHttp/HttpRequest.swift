@@ -20,6 +20,7 @@ public class HttpRequest : NSObject, @unchecked Sendable {
     public var method: Method
     public var url: String
     public var queryParams: [HttpParam]
+    public var headers: [String: String]
     public var body: BodyStruct? {
         didSet {
             if case .json = body {
@@ -27,7 +28,7 @@ public class HttpRequest : NSObject, @unchecked Sendable {
             }
         }
     }
-    public var headers: [String: String]
+    
 
     public var timeout: TimeInterval?
     
@@ -89,8 +90,8 @@ public class HttpRequest : NSObject, @unchecked Sendable {
 
         request.httpBody = body.flatMap { body -> Data? in
             switch body {
-            case .json(let string?):
-                try? JSONEncoder().encode(string)
+            case .json(let encodable?):
+                try? JSONEncoder().encode(encodable)
             case .string(let string?):
                 string.data(using: .utf8)
             case .form(let params?) where !params.isEmpty:

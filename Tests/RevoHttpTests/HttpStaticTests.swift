@@ -70,5 +70,17 @@ struct HttpStaticTests {
         let json: HttpBinResponse = try #require(response.decoded())
         #expect(json.args["name"] == "Jordi")
     }
+
+    @Test("Static call throwing overload returns decoded value on success")
+    func testStaticCallThrowsReturnsDecodedOnSuccess() async throws {
+        struct Response: Codable {
+            let ok: Bool
+        }
+        try await withHttpFake() { fake in
+            await fake.addResponse(encoded: Response(ok: true), status: 200)
+            let result: Response = try await Http.call(.get, "https://example.com", params: [:], headers: [:])
+            #expect(result.ok == true)
+        }
+    }
 }
 

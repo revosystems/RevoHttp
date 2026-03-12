@@ -24,28 +24,24 @@ struct HttpOptionsTests {
     
     @Test("Can set timeout on Http instance")
     func testCanSetTimeoutOnHttpInstance() async throws {
-        let fake = HttpFake()
-        await fake.enable()
-        let _ = await Http.withOptions(.timeout(seconds: 10)).get("https://httpbin.org/get", queryParams: [:])
-        
-        let request = try #require(await fake.calls.first)
-        #expect(request.timeout == 10.0)
+        try await withHttpFake() { fake in
+            let _ = await Http.withOptions(.timeout(seconds: 10)).get("https://httpbin.org/get", queryParams: [:])
+            let request = try #require(await fake.calls.first)
+            #expect(request.timeout == 10.0)
+        }
     }
     
     @Test("Can combine multiple options")
     func testCanCombineMultipleOptions() async throws {
-        let fake = HttpFake()
-        await fake.enable()
-        
-        let _ = await Http.withOptions(
-            .timeout(seconds: 10),
-            .hmacSHA256(header: "X-Auth", privateKey: "key")
-        ).get("https://httpbin.org/get", queryParams: ["test": "value"])
-        
-        let request = try #require(await fake.calls.first)
-        #expect(request.timeout == 10.0)
-        // Verify HMAC header was added by setOptions
-        #expect(request.headers["X-Auth"] != nil)
+        try await withHttpFake() { fake in
+            let _ = await Http.withOptions(
+                .timeout(seconds: 10),
+                .hmacSHA256(header: "X-Auth", privateKey: "key")
+            ).get("https://httpbin.org/get", queryParams: ["test": "value"])
+            let request = try #require(await fake.calls.first)
+            #expect(request.timeout == 10.0)
+            #expect(request.headers["X-Auth"] != nil)
+        }
     }
 }
 

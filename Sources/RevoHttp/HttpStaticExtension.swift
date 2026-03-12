@@ -6,6 +6,8 @@ extension Http {
         await ThreadSafeContainer.shared.resolve(Http.self)!
     }
     
+    // MARK: Generic methods
+    
     public static func call(_ method:HttpRequest.Method, url:String, params:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
         await httpInstance().call(method, url: url, params:params, headers:headers)
     }
@@ -31,13 +33,22 @@ extension Http {
         await httpInstance().call(request)
     }
     
-    // MARK: Query params
+    
+    // MARK: GET methods
+    
     public static func get(_ url:String, queryParams:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
         await httpInstance().call(HttpRequest(method: .get, url: url, queryParams: queryParams, headers: headers))
     }
     
+    
+    // MARK: POST methods
+    
     public static func post(_ url:String, queryParams:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
         await httpInstance().call(HttpRequest(method: .post, url: url, queryParams: queryParams, headers: headers))
+    }
+    
+    public static func post(_ url:String, form:[String:Codable], headers:[String:String] = [:]) async -> HttpResponse {
+        await httpInstance().call(HttpRequest(method: .post, url: url, form: form, headers: headers))
     }
     
     public static func post(_ url:String, body:String, headers:[String:String] = [:]) async -> HttpResponse {
@@ -46,38 +57,55 @@ extension Http {
         return await httpInstance().call(request)
     }
     
+    public static func post<Z:Encodable>(_ url:String, json:Z, headers:[String:String] = [:]) async -> HttpResponse {
+        let request = HttpRequest(method: .post, url: url, headers: headers)
+        request.body = .json(json)
+        return await httpInstance().call(request)
+    }
+    
+    
+    // MARK: PUT methods
+    
     public static func put(_ url:String, queryParams:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
         await httpInstance().call(HttpRequest(method: .put, url: url, queryParams: queryParams, headers: headers))
-    }
-    
-    public static func patch(_ url:String, queryParams:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
-        await httpInstance().call(HttpRequest(method: .patch, url: url, queryParams: queryParams, headers: headers))
-    }
-    
-    public static func delete(_ url:String, queryParams:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
-        await httpInstance().call(HttpRequest(method: .delete, url: url, queryParams: queryParams, headers: headers))
-    }
-    
-    // MARK: Form body
-    public static func get(_ url:String, form:[String:Codable], headers:[String:String] = [:]) async -> HttpResponse {
-        await httpInstance().call(HttpRequest(method: .get, url: url, form: form, headers: headers))
-    }
-    
-    public static func post(_ url:String, form:[String:Codable], headers:[String:String] = [:]) async -> HttpResponse {
-        await httpInstance().call(HttpRequest(method: .post, url: url, form: form, headers: headers))
     }
     
     public static func put(_ url:String, form:[String:Codable], headers:[String:String] = [:]) async -> HttpResponse {
         await httpInstance().call(HttpRequest(method: .put, url: url, form: form, headers: headers))
     }
     
+    public static func put<Z:Encodable>(_ url:String, json:Z, headers:[String:String] = [:]) async -> HttpResponse {
+        let request = HttpRequest(method: .put, url: url, headers: headers)
+        request.body = .json(json)
+        return await httpInstance().call(request)
+    }
+    
+    
+    // MARK: PATCH methods
+    
+    public static func patch(_ url:String, queryParams:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
+        await httpInstance().call(HttpRequest(method: .patch, url: url, queryParams: queryParams, headers: headers))
+    }
+    
     public static func patch(_ url:String, form:[String:Codable], headers:[String:String] = [:]) async -> HttpResponse {
         await httpInstance().call(HttpRequest(method: .patch, url: url, form: form, headers: headers))
     }
     
-    public static func delete(_ url:String, form:[String:Codable], headers:[String:String] = [:]) async -> HttpResponse {
-        await httpInstance().call(HttpRequest(method: .delete, url: url, form: form, headers: headers))
+    public static func patch<Z:Encodable>(_ url:String, json:Z, headers:[String:String] = [:]) async -> HttpResponse {
+        let request = HttpRequest(method: .patch, url: url, headers: headers)
+        request.body = .json(json)
+        return await httpInstance().call(request)
     }
+    
+    
+    // MARK: DELETE methods
+    
+    public static func delete(_ url:String, queryParams:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
+        await httpInstance().call(HttpRequest(method: .delete, url: url, queryParams: queryParams, headers: headers))
+    }
+    
+    
+    // MARK: With Options
     
     public static func withOptions(_ options: HttpOption...) async -> Http {
         let instance = await httpInstance()

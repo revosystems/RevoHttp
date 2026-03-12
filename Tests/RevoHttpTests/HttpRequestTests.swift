@@ -112,5 +112,73 @@ struct HttpRequestTests {
         let bodyString = String(data: urlRequest!.httpBody!, encoding: .utf8)
         #expect(bodyString == "body=value")
     }
+
+    @Test("generate returns nil for invalid URL")
+    func testGenerateReturnsNilForInvalidURL() {
+        let request = HttpRequest(method: .get, url: "")
+        let urlRequest = request.generate()
+        #expect(urlRequest == nil)
+    }
+
+    @Test("generate sets JSON body when body is json Encodable")
+    func testGenerateSetsJsonBodyForEncodable() {
+        struct Payload: Codable {
+            let name: String
+            let count: Int
+        }
+        let request = HttpRequest(method: .post, url: "https://example.com/post")
+        request.body = .json(Payload(name: "test", count: 42))
+
+        let urlRequest = request.generate()
+        #expect(urlRequest != nil)
+        #expect(urlRequest?.value(forHTTPHeaderField: "Content-Type") == "application/json")
+        let body = urlRequest!.httpBody!
+        let decoded = try? JSONDecoder().decode(Payload.self, from: body)
+        #expect(decoded?.name == "test")
+        #expect(decoded?.count == 42)
+    }
+
+    @Test("withHmacHeader sets header for string body")
+    func testWithHmacHeaderForStringBody() {
+        let request = HttpRequest(method: .post, url: "https://example.com/post")
+        request.body = .string("payload")
+        let hmac = HttpRequest.Hmac(header: "X-Signature", privateKey: "secret")
+        request.withHmacHeader(hmac)
+        #expect(request.headers["X-Signature"] != nil)
+        #expect(request.headers["X-Signature"]?.count == 64) // SHA256 hex length
+    }
+
+    @Test("withHmacHeader sets header for json body")
+    func testWithHmacHeaderForJsonBody() {
+        struct Payload: Encodable { let x: Int }
+        let request = HttpRequest(method: .post, url: "https://example.com/post")
+        request.body = .json(Payload(x: 1))
+        let hmac = HttpRequest.Hmac(header: "X-Hmac", privateKey: "key")
+        request.withHmacHeader(hmac)
+        #expect(request.headers["X-Hmac"] != nil)
+        #expect(request.headers["X-Hmac"]?.count == 64)
+    }
+
+    @Test("withHmacHeader sets header for form body")
+    func testWithHmacHeaderForFormBody() {
+        let request = HttpRequest(method: .post, url: "https://example.com/post", form: ["a": "b"])
+        let hmac = HttpRequest.Hmac(header: "X-Auth", privateKey: "key")
+        request.withHmacHeader(hmac)
+        #expect(request.headers["X-Auth"] != nil)
+    }
+
+    @Test("withHmacHeader uses query params when no body")
+    func testWithHmacHeaderUsesQueryParamsWhenNoBody() {
+        let request = HttpRequest(method: .get, url: "https://example.com/get", queryParams: ["q": "v"])
+        let hmac = HttpRequest.Hmac(header: "X-Sig", privateKey: "k")
+        request.withHmacHeader(hmac)
+        #expect(request.headers["X-Sig"] != nil)
+    }
+
+    @Test("toString returns empty string")
+    func testToStringReturnsEmptyString() {
+        let request = HttpRequest(method: .get, url: "https://example.com")
+        #expect(request.toString() == "")
+    }
 }
 
