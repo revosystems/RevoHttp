@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import RevoHttp
 
-@Suite()
+@Suite(.serialized)
 struct HttpMethodsTests {
     
     @Test("Can perform GET request")
@@ -13,7 +13,7 @@ struct HttpMethodsTests {
             let url: String
         }
         
-        let response = await Http.get("https://httpbin.org/get", params: ["name": "Jordi"], headers: ["X-Header": "header-value"])
+        let response = await Http.get("https://httpbin.org/get", queryParams: ["name": "Jordi"], headers: ["X-Header": "header-value"])
         
         let json: HttpBinResponse = try #require(response.decoded())
         #expect(json.args["name"] == "Jordi")
@@ -29,7 +29,7 @@ struct HttpMethodsTests {
             let url: String
         }
         
-        let response = await Http.post("https://httpbin.org/post", params: ["name": "Jordi"], headers: ["X-Header": "header-value"])
+        let response = await Http.post("https://httpbin.org/post", form: ["name": "Jordi"], headers: ["X-Header": "header-value"])
         
         let json: HttpBinResponse = try #require(response.decoded())
         #expect(json.form["name"] == "Jordi")
@@ -40,28 +40,28 @@ struct HttpMethodsTests {
     @Test("Can perform PUT request")
     func testCanPut() async throws {
         struct HttpBinResponse: Codable {
-            let form: [String: String]
+            let data: String
             let url: String
         }
         
-        let response = await Http.put("https://httpbin.org/put", params: ["name": "Jordi"])
+        let response = await Http.put("https://httpbin.org/put", form: ["name": "Jordi"])
         
         let json: HttpBinResponse = try #require(response.decoded())
-        #expect(json.form["name"] == "Jordi")
+        #expect(json.data == "name=Jordi")
         #expect(json.url == "https://httpbin.org/put")
     }
     
     @Test("Can perform PATCH request")
     func testCanPatch() async throws {
         struct HttpBinResponse: Codable {
-            let form: [String: String]
+            let data: String
             let url: String
         }
         
-        let response = await Http.patch("https://httpbin.org/patch", params: ["name": "Jordi"])
+        let response = await Http.patch("https://httpbin.org/patch", form: ["name": "Jordi"])
         
         let json: HttpBinResponse = try #require(response.decoded())
-        #expect(json.form["name"] == "Jordi")
+        #expect(json.data == "name=Jordi")
         #expect(json.url == "https://httpbin.org/patch")
     }
     
@@ -72,7 +72,7 @@ struct HttpMethodsTests {
             let url: String
         }
         
-        let response = await Http.delete("https://httpbin.org/delete", params: ["name": "Jordi"])
+        let response = await Http.delete("https://httpbin.org/delete", queryParams: ["name": "Jordi"])
         
         let json: HttpBinResponse = try #require(response.decoded())
         #expect(json.args["name"] == "Jordi")
@@ -123,7 +123,7 @@ struct HttpMethodsTests {
             let url: String
         }
         
-        let response = await Http.post("https://httpbin.org/post", params: ["name": 12, "age": 30], headers: ["X-Header": "header-value"])
+        let response = await Http.post("https://httpbin.org/post", form: ["name": 12, "age": 30], headers: ["X-Header": "header-value"])
         
         let json: HttpBinResponse = try #require(response.decoded())
         #expect(json.form["name"] == "12")
@@ -138,7 +138,7 @@ struct HttpMethodsTests {
             let url: String
         }
         
-        let response = await Http.post("https://httpbin.org/post", params: ["active": true, "inactive": false])
+        let response = await Http.post("https://httpbin.org/post", form: ["active": true, "inactive": false])
         
         let json: HttpBinResponse = try #require(response.decoded())
         #expect(["true", "1"].contains(json.form["active"]))

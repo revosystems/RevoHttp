@@ -11,16 +11,13 @@ public class Http : NSObject, Resolvable, @unchecked Sendable {
         URLSession.shared
     }()
     
-    struct Hmac {
-        let header:String
-        let privateKey:String
-    }
+    typealias Hmac = HttpRequest.Hmac
     
     override public required init() {}
     
     //MARK: - Call
     public func call(_ method:HttpRequest.Method, url:String, params:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
-        await call(HttpRequest(method: method, url: url, params: params, headers: headers))
+        await call(HttpRequest(method: method, url: url, queryParams: params, headers: headers))
     }
     
     public func call(_ method:HttpRequest.Method, _ url:String, body:String, headers:[String:String] = [:]) async -> HttpResponse {
@@ -31,15 +28,7 @@ public class Http : NSObject, Resolvable, @unchecked Sendable {
     
     public func call<Z:Encodable>(_ method:HttpRequest.Method, _ url:String, json:Z, headers:[String:String] = [:]) async -> HttpResponse {
         let request = HttpRequest(method: method, url: url, headers: headers)
-    
-        guard let data = try? JSONEncoder().encode(json) else {
-            return HttpResponse(failed: "Request not Encodable")
-        }
-        guard let body = String(data:data, encoding: .utf8) else {
-            return HttpResponse(failed: "Can't encode request data to string")
-        }
-        request.body = body
-                
+        request.body = json
         return await call(request)
     }
     
@@ -50,7 +39,7 @@ public class Http : NSObject, Resolvable, @unchecked Sendable {
     }
     
     public func call<T:Codable>(_ method:HttpRequest.Method, _ url:String, params:[String:Codable] = [:], headers:[String:String] = [:]) async throws(HttpError) -> T {
-        let response = await call(HttpRequest(method: method, url: url, params:params, headers: headers))
+        let response = await call(HttpRequest(method: method, url: url, queryParams:params, headers: headers))
         print(response.toString)
         guard response.error == nil             else { throw .responseError }
         guard response.isSuccessful             else { throw .reponseStatusError(response: response) }
@@ -61,8 +50,8 @@ public class Http : NSObject, Resolvable, @unchecked Sendable {
     public func call(_ request:HttpRequest) async -> HttpResponse {
         debugIfNeeded(request)
         
-        if let hmac, let hash = request.buildBody().hmac256(hmac.privateKey) {
-            request.headers[hmac.header] = hash
+        if let hmac {
+            request.withHmacHeader(hmac)
         }
         
         if let timeout {
@@ -100,12 +89,12 @@ public class Http : NSObject, Resolvable, @unchecked Sendable {
         }
     }
     
-    public func get(_ url:String, params:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
-        await call(HttpRequest(method: .get, url: url, params: params, headers: headers))
+    public func get(_ url:String, queryParams:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
+        await call(HttpRequest(method: .get, url: url, queryParams: queryParams, headers: headers))
     }
     
-    public func post(_ url:String, params:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
-        await call(HttpRequest(method: .post, url: url, params: params, headers: headers))
+    public func post(_ url:String, queryParams:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
+        await call(HttpRequest(method: .post, url: url, queryParams: queryParams, headers: headers))
     }
     
     public func post(_ url:String, body:String, headers:[String:String] = [:]) async -> HttpResponse {
@@ -114,16 +103,16 @@ public class Http : NSObject, Resolvable, @unchecked Sendable {
         return await call(request)
     }
     
-    public func put(_ url:String, params:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
-        await call(HttpRequest(method: .put, url: url, params: params, headers: headers))
+    public func put(_ url:String, queryParams:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
+        await call(HttpRequest(method: .put, url: url, queryParams: queryParams, headers: headers))
     }
     
-    public func patch(_ url:String, params:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
-        await call(HttpRequest(method: .patch, url: url, params: params, headers: headers))
+    public func patch(_ url:String, queryParams:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
+        await call(HttpRequest(method: .patch, url: url, queryParams: queryParams, headers: headers))
     }
     
-    public func delete(_ url:String, params:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
-        await call(HttpRequest(method: .delete, url: url, params: params, headers: headers))
+    public func delete(_ url:String, queryParams:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
+        await call(HttpRequest(method: .delete, url: url, queryParams: queryParams, headers: headers))
     }
     
     public func withOptions(_ options: [HttpOption]) -> Self {

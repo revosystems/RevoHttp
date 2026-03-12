@@ -31,12 +31,13 @@ extension Http {
         await httpInstance().call(request)
     }
     
-    public static func get(_ url:String, params:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
-        await httpInstance().call(HttpRequest(method: .get, url: url, params: params, headers: headers))
+    // MARK: Query params
+    public static func get(_ url:String, queryParams:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
+        await httpInstance().call(HttpRequest(method: .get, url: url, queryParams: queryParams, headers: headers))
     }
     
-    public static func post(_ url:String, params:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
-        await httpInstance().call(HttpRequest(method: .post, url: url, params: params, headers: headers))
+    public static func post(_ url:String, queryParams:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
+        await httpInstance().call(HttpRequest(method: .post, url: url, queryParams: queryParams, headers: headers))
     }
     
     public static func post(_ url:String, body:String, headers:[String:String] = [:]) async -> HttpResponse {
@@ -45,16 +46,37 @@ extension Http {
         return await httpInstance().call(request)
     }
     
-    public static func put(_ url:String, params:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
-        await httpInstance().call(HttpRequest(method: .put, url: url, params: params, headers: headers))
+    public static func put(_ url:String, queryParams:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
+        await httpInstance().call(HttpRequest(method: .put, url: url, queryParams: queryParams, headers: headers))
     }
     
-    public static func patch(_ url:String, params:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
-        await httpInstance().call(HttpRequest(method: .patch, url: url, params: params, headers: headers))
+    public static func patch(_ url:String, queryParams:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
+        await httpInstance().call(HttpRequest(method: .patch, url: url, queryParams: queryParams, headers: headers))
     }
     
-    public static func delete(_ url:String, params:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
-        await httpInstance().call(HttpRequest(method: .delete, url: url, params: params, headers: headers))
+    public static func delete(_ url:String, queryParams:[String:Codable] = [:], headers:[String:String] = [:]) async -> HttpResponse {
+        await httpInstance().call(HttpRequest(method: .delete, url: url, queryParams: queryParams, headers: headers))
+    }
+    
+    // MARK: Form body
+    public static func get(_ url:String, form:[String:Codable], headers:[String:String] = [:]) async -> HttpResponse {
+        await httpInstance().call(HttpRequest(method: .get, url: url, form: form, headers: headers))
+    }
+    
+    public static func post(_ url:String, form:[String:Codable], headers:[String:String] = [:]) async -> HttpResponse {
+        await httpInstance().call(HttpRequest(method: .post, url: url, form: form, headers: headers))
+    }
+    
+    public static func put(_ url:String, form:[String:Codable], headers:[String:String] = [:]) async -> HttpResponse {
+        await httpInstance().call(HttpRequest(method: .put, url: url, form: form, headers: headers))
+    }
+    
+    public static func patch(_ url:String, form:[String:Codable], headers:[String:String] = [:]) async -> HttpResponse {
+        await httpInstance().call(HttpRequest(method: .patch, url: url, form: form, headers: headers))
+    }
+    
+    public static func delete(_ url:String, form:[String:Codable], headers:[String:String] = [:]) async -> HttpResponse {
+        await httpInstance().call(HttpRequest(method: .delete, url: url, form: form, headers: headers))
     }
     
     public static func withOptions(_ options: HttpOption...) async -> Http {

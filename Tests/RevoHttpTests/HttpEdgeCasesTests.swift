@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import RevoHttp
 
-@Suite()
+@Suite(.serialized)
 struct HttpEdgeCasesTests {
     
     @Test("Can handle empty headers")
@@ -12,7 +12,7 @@ struct HttpEdgeCasesTests {
             let url: String
         }
         
-        let response = await Http.get("https://httpbin.org/get", params: [:], headers: [:])
+        let response = await Http.get("https://httpbin.org/get", queryParams: [:], headers: [:])
         
         let json: HttpBinResponse = try #require(response.decoded())
         #expect(json.url == "https://httpbin.org/get")

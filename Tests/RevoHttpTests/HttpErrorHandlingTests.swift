@@ -2,12 +2,12 @@ import Foundation
 import Testing
 @testable import RevoHttp
 
-@Suite()
+@Suite(.serialized)
 struct HttpErrorHandlingTests {
     
     @Test("Can handle invalid URL")
     func testCanHandleInvalidUrl() async throws {
-        let response = await Http.get("not-a-valid-url", params: [:])
+        let response = await Http.get("not-a-valid-url", queryParams: [:])
         
         #expect(response.error != nil)
         #expect(response.toString.contains("Error"))

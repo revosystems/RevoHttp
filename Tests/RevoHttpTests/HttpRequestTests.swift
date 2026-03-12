@@ -7,15 +7,15 @@ struct HttpRequestTests {
     
     @Test("Can convert request to curl")
     func testCanConvertRequestToCurl() {
-        let request = HttpRequest(method: .get, url: "https://httpbin.org/get", params: ["name": "Jordi", "lastName": "Puigdellívol"], headers: ["X-Header": "Value1", "X-Header2": "Value2"])
+        let request = HttpRequest(method: .get, url: "https://httpbin.org/get", queryParams: ["name": "Jordi", "lastName": "Puigdellívol"], headers: ["X-Header": "Value1", "X-Header2": "Value2"])
         
         let result = request.toCurl()
-        #expect(result == "curl -d \"lastName=Puigdellívol&name=Jordi\" -H \"X-Header: Value1\" -H \"X-Header2: Value2\" -X GET https://httpbin.org/get")
+        #expect(result == "curl -d \"lastName=Puigdell%C3%ADvol&name=Jordi\" -H \"X-Header: Value1\" -H \"X-Header2: Value2\" -X GET https://httpbin.org/get")
     }
     
     @Test("Can convert POST request to curl")
     func testCanConvertPostRequestToCurl() {
-        let request = HttpRequest(method: .post, url: "https://httpbin.org/post", params: ["name": "Jordi"], headers: ["Content-Type": "application/json"])
+        let request = HttpRequest(method: .post, url: "https://httpbin.org/post", queryParams: ["name": "Jordi"], headers: ["Content-Type": "application/json"])
         
         let result = request.toCurl()
         #expect(result == "curl -d \"name=Jordi\" -H \"Content-Type: application/json\" -X POST https://httpbin.org/post")
@@ -23,7 +23,7 @@ struct HttpRequestTests {
     
     @Test("Can generate URLRequest from HttpRequest")
     func testCanGenerateURLRequest() {
-        let request = HttpRequest(method: .get, url: "https://httpbin.org/get", params: ["name": "Jordi"], headers: ["X-Header": "Value1"])
+        let request = HttpRequest(method: .get, url: "https://httpbin.org/get", queryParams: ["name": "Jordi"], headers: ["X-Header": "Value1"])
         
         let urlRequest = request.generate()
         #expect(urlRequest != nil)
@@ -53,7 +53,7 @@ struct HttpRequestTests {
     }
     
     @Test("Can handle nested parameters")
-    func testCanHandleNestedParameters() {
+    func testCanHandleNestedParameters() throws {
         let nestedParams = [
             "user": [
                 "name": "Jordi",
@@ -61,8 +61,8 @@ struct HttpRequestTests {
             ]
         ]
         
-        let request = HttpRequest(method: .post, url: "https://httpbin.org/post", params: nestedParams)
-        let body = request.buildBody()
+        let request = HttpRequest(method: .post, url: "https://httpbin.org/post", queryParams: nestedParams)
+        let body = request.buildQueryParams()
         
         #expect(body.contains("user[name]"))
         #expect(body.contains("user[age]"))
@@ -70,15 +70,15 @@ struct HttpRequestTests {
     
     @Test("Can handle empty parameters")
     func testCanHandleEmptyParameters() {
-        let request = HttpRequest(method: .get, url: "https://httpbin.org/get", params: [:])
-        let body = request.buildBody()
+        let request = HttpRequest(method: .get, url: "https://httpbin.org/get", queryParams: [:])
+        let body = request.buildFormBody()
         
-        #expect(body.isEmpty)
+        #expect(body == nil)
     }
     
     @Test("Can handle special characters in parameters")
     func testCanHandleSpecialCharactersInParameters() {
-        let request = HttpRequest(method: .get, url: "https://httpbin.org/get", params: ["name": "Jordi & Co", "email": "test@example.com"])
+        let request = HttpRequest(method: .get, url: "https://httpbin.org/get", queryParams: ["name": "Jordi & Co", "email": "test@example.com"])
         let url = request.buildUrl()
         
         #expect(url.contains("name="))
@@ -86,9 +86,9 @@ struct HttpRequestTests {
     }
     
     @Test("Can handle NSNull in parameters")
-    func testCanHandleNSNullInParameters() {
-        let request = HttpRequest(method: .post, url: "https://httpbin.org/post", params: ["nullValue": NSNull()])
-        let body = request.buildBody()
+    func testCanHandleNSNullInParameters() throws {
+        let request = HttpRequest(method: .post, url: "https://httpbin.org/post", queryParams: ["nullValue": NSNull()])
+        let body = request.buildQueryParams()
         
         // NSNull should be converted to empty string
         #expect(body.contains("nullValue="))
@@ -96,7 +96,7 @@ struct HttpRequestTests {
     
     @Test("Can handle URL encoding in parameters")
     func testCanHandleUrlEncodingInParameters() {
-        let request = HttpRequest(method: .get, url: "https://httpbin.org/get", params: ["name": "Jordi Puigdellívol"])
+        let request = HttpRequest(method: .get, url: "https://httpbin.org/get", queryParams: ["name": "Jordi Puigdellívol"])
         let url = request.buildUrl()
         
         // URL should be properly encoded
@@ -105,7 +105,7 @@ struct HttpRequestTests {
     
     @Test("Can handle request with body overriding params")
     func testCanHandleRequestWithBodyOverridingParams() {
-        let request = HttpRequest(method: .post, url: "https://httpbin.org/post", params: ["param1": "value1"])
+        let request = HttpRequest(method: .post, url: "https://httpbin.org/post", queryParams: ["param1": "value1"])
         request.body = "body=value"
         
         let urlRequest = request.generate()

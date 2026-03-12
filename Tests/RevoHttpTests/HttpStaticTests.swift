@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import RevoHttp
 
-@Suite()
+@Suite(.serialized)
 struct HttpStaticTests {
     
     @Test("Can use static call method")
@@ -25,7 +25,7 @@ struct HttpStaticTests {
             let url: String
         }
         
-        let request = HttpRequest(method: .get, url: "https://httpbin.org/get", params: ["name": "Jordi"])
+        let request = HttpRequest(method: .get, url: "https://httpbin.org/get", queryParams: ["name": "Jordi"])
         let response = await Http.call(request)
         
         let json: HttpBinResponse = try #require(response.decoded())
@@ -35,27 +35,27 @@ struct HttpStaticTests {
     @Test("Can use static PUT method")
     func testCanUseStaticPutMethod() async throws {
         struct HttpBinResponse: Codable {
-            let form: [String: String]
+            let data: String
             let url: String
         }
         
-        let response = await Http.put("https://httpbin.org/put", params: ["name": "Jordi"])
+        let response = await Http.put("https://httpbin.org/put", form: ["name": "Jordi"])
         
         let json: HttpBinResponse = try #require(response.decoded())
-        #expect(json.form["name"] == "Jordi")
+        #expect(json.data == "name=Jordi")
     }
     
     @Test("Can use static PATCH method")
     func testCanUseStaticPatchMethod() async throws {
         struct HttpBinResponse: Codable {
-            let form: [String: String]
+            let data: String
             let url: String
         }
         
-        let response = await Http.patch("https://httpbin.org/patch", params: ["name": "Jordi"])
+        let response = await Http.patch("https://httpbin.org/patch", form: ["name": "Jordi"])
         
         let json: HttpBinResponse = try #require(response.decoded())
-        #expect(json.form["name"] == "Jordi")
+        #expect(json.data == "name=Jordi")
     }
     
     @Test("Can use static DELETE method")
@@ -65,7 +65,7 @@ struct HttpStaticTests {
             let url: String
         }
         
-        let response = await Http.delete("https://httpbin.org/delete", params: ["name": "Jordi"])
+        let response = await Http.delete("https://httpbin.org/delete", queryParams: ["name": "Jordi"])
         
         let json: HttpBinResponse = try #require(response.decoded())
         #expect(json.args["name"] == "Jordi")

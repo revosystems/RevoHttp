@@ -13,7 +13,7 @@ struct HttpOptionsTests {
             let url: String
         }
         
-        let response = await Http.withOptions(.hmacSHA256(header: "X-Header-Sha", privateKey: "PRVIATE_KEY")).get("https://httpbin.org/get", params: ["name": "Jordi"], headers: ["X-Header": "header-value"])
+        let response = await Http.withOptions(.hmacSHA256(header: "X-Header-Sha", privateKey: "PRVIATE_KEY")).get("https://httpbin.org/get", queryParams: ["name": "Jordi"], headers: ["X-Header": "header-value"])
         
         let json: HttpBinResponse = try #require(response.decoded())
         #expect(json.args["name"] == "Jordi")
@@ -26,7 +26,7 @@ struct HttpOptionsTests {
     func testCanSetTimeoutOnHttpInstance() async throws {
         let fake = HttpFake()
         await fake.enable()
-        let _ = await Http.withOptions(.timeout(seconds: 10)).get("https://httpbin.org/get", params: [:])
+        let _ = await Http.withOptions(.timeout(seconds: 10)).get("https://httpbin.org/get", queryParams: [:])
         
         let request = try #require(await fake.calls.first)
         #expect(request.timeout == 10.0)
@@ -40,7 +40,7 @@ struct HttpOptionsTests {
         let _ = await Http.withOptions(
             .timeout(seconds: 10),
             .hmacSHA256(header: "X-Auth", privateKey: "key")
-        ).get("https://httpbin.org/get", params: ["test": "value"])
+        ).get("https://httpbin.org/get", queryParams: ["test": "value"])
         
         let request = try #require(await fake.calls.first)
         #expect(request.timeout == 10.0)
