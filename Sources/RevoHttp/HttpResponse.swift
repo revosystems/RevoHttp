@@ -36,7 +36,7 @@ public class HttpResponse : NSObject {
     public func decoded<T:Codable>() -> T? {
         guard let data = data else { return nil }
         do {
-            return try T.decode(from: data)
+            return try JSONDecoder().decode(T.self, from: data)
         } catch {
             debugPrint("** Can't decode HttpResponse:" + error.localizedDescription)
             return nil

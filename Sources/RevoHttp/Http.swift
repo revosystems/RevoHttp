@@ -1,5 +1,4 @@
 import Foundation
-import RevoFoundation
 
 public class Http : NSObject {
     
