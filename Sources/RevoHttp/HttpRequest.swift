@@ -1,5 +1,4 @@
 import Foundation
-import RevoFoundation
 
 public class HttpRequest : NSObject {
 
@@ -133,7 +132,7 @@ public class HttpRequest : NSObject {
     private func buildParams(_ params: [HttpParam]) -> String {
         params.map { param in
             param.encoded()
-        }.implode("&")
+        }.joined(separator: "&")
     }
 
     private func buildUrl() -> String {
@@ -149,7 +148,7 @@ public class HttpRequest : NSObject {
     private func buildFormParams(_ params: [HttpParam]) -> String {
         params.map { param in
             param.formEncoded()
-        }.implode("&")
+        }.joined(separator: "&")
     }
 
     private func buildFormBody() -> String? {
@@ -178,7 +177,7 @@ public class HttpRequest : NSObject {
         }
         let p = parameters.map { param in
             param.encoded()
-        }.implode("&")
+        }.joined(separator: "&")
         
         if (p.count > 0) {
             result = result + "-d \"\(p)\""
@@ -186,7 +185,7 @@ public class HttpRequest : NSObject {
         
         let h = headers.map { key, value in
             "-H \"\(key): \(value)\""
-        }.implode(" ")
+        }.joined(separator: " ")
         
         if (h.count > 0){
             result = result + " \(h)"
@@ -240,14 +239,15 @@ public struct HttpParam{
     }
         
     fileprivate func encoded() -> String {
-        "\(key)=\(value.urlEncoded() ?? "")"
+        "\(key)=\(value.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? "")"
     }
 
     fileprivate func formEncoded() -> String {
-        "\(key)=\(value.formURLEncoded() ?? "")"
+        "\(key)=\(value.formURLEncoded())"
     }
 }
 
+import CryptoKit
 extension String {
     func formURLEncoded() -> String {
         let unreserved = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._*"
@@ -257,5 +257,14 @@ extension String {
         var encoded = self.addingPercentEncoding(withAllowedCharacters: allowed) ?? ""
         encoded = encoded.replacingOccurrences(of: " ", with: "+")
         return encoded
+    }
+    
+    func hmac256(_ key:String) -> String? {
+        guard let messageData = self.data(using: .utf8), let keyData = key.data(using: .utf8) else {
+            return nil
+        }
+        
+        let code = HMAC<SHA256>.authenticationCode(for: messageData, using: SymmetricKey(data: keyData))
+        return Data(code).map { String(format: "%02hhx", $0) }.joined()
     }
 }

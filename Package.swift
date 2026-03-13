@@ -13,17 +13,9 @@ let package = Package(
             targets: ["RevoHttp"]
         )
     ],
-    dependencies: [
-        .package(
-            name:"RevoFoundation", 
-            url: "https://github.com/revosystems/foundation", .upToNextMinor(from: "0.3.1")
-        ),
-    ],
     targets: [
         .target(
-            name: "RevoHttp",
-            dependencies: ["RevoFoundation"],
-            path: "RevoHttp/src"
+            name: "RevoHttp"
         ),
         .testTarget(
             name: "RevoHttpTests",

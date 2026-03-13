@@ -43,7 +43,10 @@ public class HttpFake : NSObject {
             return then(Self.globalResponses.first!)
         }
         
-        if let toRespond = Self.globalResponses.pop() {
+        if let toRespond = Self.globalResponses.first {
+            if Self.globalResponses.count > 1 {
+                Self.globalResponses.removeFirst()
+            }
             return then(toRespond)
         }
         
@@ -57,7 +60,7 @@ public class HttpFake : NSObject {
     }
         
     public static func addResponse<T:Codable>(encoded response:T, status:Int = 200) {
-        let data = try! response.encode()
+        let data = try! JSONEncoder().encode(response)
         let httpResponse    = HTTPURLResponse(url: URL(string:"http://fakeUrl.com")!, statusCode: status, httpVersion: "1.0", headerFields: nil)
         let globalResponse  = HttpResponse(data:data, response:httpResponse , error: nil)
         Self.globalResponses.append(globalResponse)
@@ -70,7 +73,7 @@ public class HttpFake : NSObject {
     }
     
     public static func addResponse<T:Codable>(for url:String, encoded response:T, status:Int = 200) {
-        let data = try! response.encode()
+        let data = try! JSONEncoder().encode(response)
         let httpResponse    = HTTPURLResponse(url: URL(string:"http://fakeUrl.com")!, statusCode: status, httpVersion: "1.0", headerFields: nil)
         let concreteResponse  = HttpResponse(data:data, response:httpResponse , error: nil)
         Self.responses[url]   = concreteResponse
