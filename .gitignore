@@ -1,3 +1,6 @@
 Pods/
+Package.resolved
+.swiftpm/
+.build/
 RevoHttp.xcodeproj/xcuserdata
 RevoHttp.xcworkspace/xcuserdata

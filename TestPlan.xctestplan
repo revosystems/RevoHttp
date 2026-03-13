@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "BA0AD2CF-25DF-4517-A3D1-BB663B715447",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : false,
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "RevoHttpTests",
+        "name" : "RevoHttpTests"
+      }
+    }
+  ],
+  "version" : 1
+}
