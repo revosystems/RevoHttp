@@ -1,6 +1,6 @@
 import Foundation
 
-public enum HttpError : Error {
+public enum HttpError : LocalizedError {
     
     case invalidUrl
     case invalidParams
@@ -8,7 +8,7 @@ public enum HttpError : Error {
     case reponseStatusError(response:HttpResponse)
     case undecodableResponse
     
-    var localizedDescription: String {
+    public var errorDescription: String? {
         switch self {
         case .invalidUrl:           "Malformed Url"
         case .invalidParams:        "Invalid input params"
