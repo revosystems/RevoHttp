@@ -109,9 +109,9 @@ public class HttpRequest : NSObject, @unchecked Sendable {
     public func withHmacHeader(_ hmac: Hmac) {
         let payload = switch body {
         case .json(let encodable?):      String(data: try! JSONEncoder().encode(encodable), encoding: .utf8)!
-            case .string(let string?): string
-            case .form:              buildFormBody() ?? ""
-            default:                 buildQueryParams()
+        case .string(let string?): string
+        case .form:              buildFormBody() ?? ""
+        default:                 buildQueryParams()
         }
         if let hash = payload.hmac256(hmac.privateKey) {
             headers[hmac.header] = hash
