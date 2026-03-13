@@ -1,8 +1,8 @@
 import Foundation
 
-class InsecureUrlSession : NSObject, URLSessionDelegate {
+class InsecureUrlSession : NSObject, URLSessionDelegate, @unchecked Sendable {
     
-    var session:URLSession!
+    private(set) var session:URLSession!
     
     override init() {
         super.init()

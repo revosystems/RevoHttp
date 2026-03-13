@@ -1,14 +1,20 @@
 import Foundation
+#if canImport(UIKit)
 import UIKit
+public typealias REImage = UIImage
+#elseif canImport(AppKit)
+import AppKit
+public typealias REImage = NSImage
+#endif
 
-public class MultipartHttpRequest : HttpRequest {
+public class MultipartHttpRequest : HttpRequest, @unchecked Sendable {
     
     var paramName:String?
     var fileName:String?
-    var image:UIImage?
+    var image:REImage?
     let boundary = UUID().uuidString
     
-    public func addMultipart(paramName: String, fileName: String, image: UIImage) -> MultipartHttpRequest{
+    public func addMultipart(paramName: String, fileName: String, image: REImage) -> MultipartHttpRequest{
         self.paramName  = paramName
         self.fileName   = fileName
         self.image      = image
@@ -36,7 +42,11 @@ public class MultipartHttpRequest : HttpRequest {
         data.append("\r\n--\(boundary)\r\n".data(using: .utf8)!)
         data.append("Content-Disposition: form-data; name=\"\(paramName)\"; filename=\"\(fileName)\"\r\n".data(using: .utf8)!)
         data.append("Content-Type: image/png\r\n\r\n".data(using: .utf8)!)
+        #if canImport(UIKit)
         data.append(image.pngData()!)
+        #elseif canImport(AppKit)
+        data.append(image.tiffRepresentation!)
+        #endif
 
         data.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
         return data

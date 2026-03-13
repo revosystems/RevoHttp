@@ -1,6 +1,6 @@
 import Foundation
 
-public class HttpRequest : NSObject {
+public class HttpRequest : NSObject, @unchecked Sendable {
 
     public enum Method {
         case get, post, patch, put, delete
@@ -8,7 +8,8 @@ public class HttpRequest : NSObject {
 
     public enum BodyStruct {
         case form([HttpParam]?)
-        case json(String?)
+        case string(String?)
+        case json(Encodable?)
     }
     
     public struct Hmac {
@@ -19,26 +20,15 @@ public class HttpRequest : NSObject {
     public var method: Method
     public var url: String
     public var queryParams: [HttpParam]
-    public var bodyStruct: BodyStruct?
     public var headers: [String: String]
-
-    public var body: String? { // deprecated
-        get {
-            switch bodyStruct {
-            case .json(let string):
-                return string
-            default:
-                return nil
-            }
-        }
-        set {
-            if let newValue = newValue {
-                bodyStruct = .json(newValue)
-            } else {
-                bodyStruct = nil
+    public var body: BodyStruct? {
+        didSet {
+            if case .json = body {
+                headers["Content-Type"] = "application/json"
             }
         }
     }
+    
 
     public var timeout: TimeInterval?
     
@@ -52,7 +42,7 @@ public class HttpRequest : NSObject {
         self.method      = method
         self.url         = url
         self.queryParams = queryParams.createParams(nil)
-        self.bodyStruct  = bodyStruct
+        self.body  = bodyStruct
         self.headers     = headers
     }
 
@@ -98,14 +88,16 @@ public class HttpRequest : NSObject {
 
         request.url = URL(string: buildUrl())
 
-        request.httpBody = bodyStruct.flatMap { body -> Data? in
+        request.httpBody = body.flatMap { body -> Data? in
             switch body {
-            case .json(let string?) where !string.isEmpty && string != "{}":
-                return string.data(using: .utf8)
+            case .json(let encodable?):
+                try? JSONEncoder().encode(encodable)
+            case .string(let string?):
+                string.data(using: .utf8)
             case .form(let params?) where !params.isEmpty:
-                return buildFormBody()?.data(using: .utf8)
+                buildFormBody()?.data(using: .utf8)
             default:
-                return nil
+                nil
             }
         }
 
@@ -115,16 +107,13 @@ public class HttpRequest : NSObject {
     }
 
     public func withHmacHeader(_ hmac: Hmac) {
-        let payload: String
-        switch bodyStruct {
-        case .json(let string?):
-            payload = string
-        case .form:
-            payload = buildFormBody() ?? ""
-        default:
-            payload = buildQueryParams()
+        let payload = switch body {
+        case .json(let encodable?):      String(data: try! JSONEncoder().encode(encodable), encoding: .utf8)!
+        case .string(let string?): string
+        case .form:              buildFormBody() ?? ""
+        default:                 buildQueryParams()
         }
-        if !payload.isEmpty, let hash = payload.hmac256(hmac.privateKey) {
+        if let hash = payload.hmac256(hmac.privateKey) {
             headers[hmac.header] = hash
         }
     }
@@ -135,13 +124,13 @@ public class HttpRequest : NSObject {
         }.joined(separator: "&")
     }
 
-    private func buildUrl() -> String {
+    func buildUrl() -> String {
         queryParams.isEmpty
             ? url
             : "\(url)?\(buildQueryParams())"
     }
 
-    private func buildQueryParams() -> String {
+    func buildQueryParams() -> String {
         buildParams(queryParams)
     }
 
@@ -151,8 +140,8 @@ public class HttpRequest : NSObject {
         }.joined(separator: "&")
     }
 
-    private func buildFormBody() -> String? {
-        guard case .form(let params?) = bodyStruct else {
+    func buildFormBody() -> String? {
+        guard case .form(let params?) = body else {
             return nil
         }
 
@@ -170,7 +159,7 @@ public class HttpRequest : NSObject {
         var result = "curl "
         var parameters: [HttpParam] = []
 
-        if case .form(let params?) = bodyStruct {
+        if case .form(let params?) = body {
             parameters = params
         } else {
             parameters = queryParams
@@ -180,22 +169,23 @@ public class HttpRequest : NSObject {
         }.joined(separator: "&")
         
         if (p.count > 0) {
-            result = result + "-d \"\(p)\""
+            result += "-d \"\(p)\""
         }
         
-        let h = headers.map { key, value in
-            "-H \"\(key): \(value)\""
+        let h = headers.keys.sorted().compactMap { key in
+            guard let value = headers[key] else { return nil }
+            return "-H \"\(key): \(value)\""
         }.joined(separator: " ")
         
         if (h.count > 0){
-            result = result + " \(h)"
+            result += " \(h)"
         }
         
         return result + " -X \(methodUppercased) \(url)"
     }
     
     public func toString() -> String {
-        return ""
+        ""
     }
     
     var methodUppercased: String {
@@ -210,14 +200,13 @@ public protocol HttpParamProtocol {
 extension Dictionary : HttpParamProtocol{
     public func createParams(_ key: String?) -> [HttpParam] {
         var collect = [HttpParam]()
-        for (k, v) in self {
-            if let nestedKey = k as? String {
-                let useKey = key != nil ? "\(key!)[\(nestedKey)]" : nestedKey
-                if let subParam = v as? HttpParamProtocol {
-                    collect.append(contentsOf: subParam.createParams(useKey))
-                } else {
-                    collect.append(HttpParam(key: useKey, storedValue: v as AnyObject))
-                }
+        for k in self.keys.compactMap({ $0 as? String }).sorted() {
+            guard let k = k as? Key else { continue }
+            let useKey = key != nil ? "\(key!)[\(k)]" : "\(k)"
+            if let subParam = self[k] as? HttpParamProtocol {
+                collect.append(contentsOf: subParam.createParams(useKey))
+            } else {
+                collect.append(HttpParam(key: useKey, storedValue: self[k] as AnyObject))
             }
         }
         return collect
@@ -231,11 +220,8 @@ public struct HttpParam{
     var value: String {
         if storedValue is NSNull {
             return ""
-        } else if let v = storedValue as? String {
-            return v
-        } else {
-            return storedValue.description ?? ""
         }
+        return storedValue as? String ?? storedValue.description ?? ""
     }
         
     fileprivate func encoded() -> String {

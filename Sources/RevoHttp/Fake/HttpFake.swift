@@ -1,81 +1,102 @@
 import Foundation
 
-
-public class HttpFake : NSObject {
+actor HttpFakeState {
+    var calls: [HttpRequest] = []
+    var responses: [String: HttpResponse] = [:]
+    var globalResponses: [HttpResponse] = []
     
-    public static var calls:[HttpRequest]       = []
-    static var responses:[String:HttpResponse]  = [:]
-    static var globalResponses:[HttpResponse]   = []
+    func reset() {
+        calls = []
+        responses = [:]
+        globalResponses = []
+    }
     
-    static var swizzled = false
+    func addCall(_ request: HttpRequest) {
+        calls.append(request)
+    }
     
-    public static func enable(){
-        Self.responses = [:]
-        Self.globalResponses = []
-        Self.calls = []
-        if (swizzled) { return }
-        
-                
-        guard let originalMethod = class_getInstanceMethod(Http.self,     #selector(call(_:then:))),
-            let newMethod        = class_getInstanceMethod(HttpFake.self, #selector(call(_:then:))) else {
-                return
+    func getResponse(for url: String) -> HttpResponse? {
+        responses[url]
+    }
+    
+    func getGlobalResponse() -> HttpResponse? {
+        guard let first = globalResponses.first else { return nil }
+        if globalResponses.count > 1 {
+            globalResponses.removeFirst()
         }
+        return first
+    }
+    
+    func addResponse(_ response: HttpResponse, for url: String?) {
+        if let url {
+            responses[url] = response
+        } else {
+            globalResponses.append(response)
+        }
+    }
+}
+
+public class HttpFake : Http, @unchecked Sendable {
         
-        method_exchangeImplementations(originalMethod, newMethod)
+    public var calls: [HttpRequest] {
+        get async {
+            await state.calls
+        }
+    }
+    
+    public var globalResponses: [HttpResponse] {
+        get async {
+            await state.globalResponses
+        }
+    }
+    
+    public var responses: [String: HttpResponse] {
+        get async {
+            await state.responses
+        }
+    }
+    
+    private let state = HttpFakeState()
+    var swizzled = false
+    
+    public func enable() async {
+        await state.reset()
+        guard !swizzled else { return }
+        
+        await ThreadSafeContainer.shared.bind(instance: Http.self, self)
         swizzled = true
     }
     
-    public static func disable(){
-        if (!swizzled) { return }
-        swizzled = false
-        Self.enable()
+    public func disable() async {
+        guard swizzled else { return }
+        await state.reset()
+        
+        await ThreadSafeContainer.shared.unbind(Http.self)
         swizzled = false
     }
     
-    @objc dynamic public func call(_ request:HttpRequest, then:@escaping(_ response:HttpResponse)->Void) {
-        Self.calls.append(request)
-        
-        if let toRespond = Self.responses[request.url] {
-            return then(toRespond)
+    public override func makeCall(_ request:HttpRequest) async -> HttpResponse {
+        await state.addCall(request)
+                
+        if let urlResponse = await state.getResponse(for: request.url) {
+            return urlResponse
         }
-        
-        if (Self.globalResponses.count == 1) {
-            return then(Self.globalResponses.first!)
+        if let globalResponse = await state.getGlobalResponse() {
+            return globalResponse
         }
-        
-        if let toRespond = Self.globalResponses.first {
-            if Self.globalResponses.count > 1 {
-                Self.globalResponses.removeFirst()
-            }
-            return then(toRespond)
-        }
-        
-        then(HttpResponse(data: nil, response: nil, error: nil))
+        return HttpResponse(data: nil, response: nil, error: nil)
     }
     
-    public static func addResponse(_ response:String, status:Int = 200) {
-        let httpResponse    = HTTPURLResponse(url: URL(string:"http://fakeUrl.com")!, statusCode: status, httpVersion: "1.0", headerFields: nil)
-        let globalResponse  = HttpResponse(data:response.data(using: .utf8), response:httpResponse , error: nil)
-        Self.globalResponses.append(globalResponse)
+    public func addResponse(for url:String? = nil, _ response:String, status:Int = 200) async {
+        let httpResponse = HTTPURLResponse(url: URL(string:"http://fakeUrl.com")!, statusCode: status, httpVersion: "1.0", headerFields: nil)
+        let httpResponseObj = HttpResponse(data:response.data(using: .utf8), response:httpResponse , error: nil)
+        await state.addResponse(httpResponseObj, for: url)
     }
         
-    public static func addResponse<T:Codable>(encoded response:T, status:Int = 200) {
+    public func addResponse<T:Codable>(for url:String? = nil, encoded response:T, status:Int = 200) async {
         let data = try! JSONEncoder().encode(response)
         let httpResponse    = HTTPURLResponse(url: URL(string:"http://fakeUrl.com")!, statusCode: status, httpVersion: "1.0", headerFields: nil)
-        let globalResponse  = HttpResponse(data:data, response:httpResponse , error: nil)
-        Self.globalResponses.append(globalResponse)
-    }
-    
-    public static func addResponse(for url:String, _ response:String, status:Int = 200) {
-        let httpResponse    = HTTPURLResponse(url: URL(string:"http://fakeUrl.com")!, statusCode: status, httpVersion: "1.0", headerFields: nil)
-        let concreteResponse  = HttpResponse(data:response.data(using: .utf8), response:httpResponse , error: nil)
-        Self.responses[url]   = concreteResponse
-    }
-    
-    public static func addResponse<T:Codable>(for url:String, encoded response:T, status:Int = 200) {
-        let data = try! JSONEncoder().encode(response)
-        let httpResponse    = HTTPURLResponse(url: URL(string:"http://fakeUrl.com")!, statusCode: status, httpVersion: "1.0", headerFields: nil)
-        let concreteResponse  = HttpResponse(data:data, response:httpResponse , error: nil)
-        Self.responses[url]   = concreteResponse
+        let httpResponseObj = HttpResponse(data:data, response:httpResponse , error: nil)
+        await state.addResponse(httpResponseObj, for: url)
     }
 }
