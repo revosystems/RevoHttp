@@ -233,6 +233,7 @@ public struct HttpParam{
     }
 }
 
+import CryptoKit
 extension String {
     func formURLEncoded() -> String {
         let unreserved = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._*"
@@ -242,5 +243,14 @@ extension String {
         var encoded = self.addingPercentEncoding(withAllowedCharacters: allowed) ?? ""
         encoded = encoded.replacingOccurrences(of: " ", with: "+")
         return encoded
+    }
+    
+    func hmac256(_ key:String) -> String? {
+        guard let messageData = self.data(using: .utf8), let keyData = key.data(using: .utf8) else {
+            return nil
+        }
+        
+        let code = HMAC<SHA256>.authenticationCode(for: messageData, using: SymmetricKey(data: keyData))
+        return Data(code).map { String(format: "%02hhx", $0) }.joined()
     }
 }

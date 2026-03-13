@@ -137,16 +137,3 @@ public class Http : NSObject, Resolvable, @unchecked Sendable {
         debugPrint("****** HTTP DEBUG ****** " + request.toCurl())
     }
 }
-
-
-import CryptoKit
-extension String {
-    func hmac256(_ key:String) -> String? {
-        guard let messageData = self.data(using: .utf8), let keyData = key.data(using: .utf8) else {
-            return nil
-        }
-        
-        let code = HMAC<SHA256>.authenticationCode(for: messageData, using: SymmetricKey(data: keyData))
-        return Data(code).map { String(format: "%02hhx", $0) }.joined()
-    }
-}
