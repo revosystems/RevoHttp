@@ -31,6 +31,24 @@ struct HttpOptionsTests {
         }
     }
     
+    @Test("Can allow unsecure urls")
+    func testCanAllowUnsecureUrls() async throws {
+        try await withHttpFake() { fake in
+            let _ = await Http.withOptions(.allowUnsecureUrls).get("https://httpbin.org/get", queryParams: [:])
+            let insecureUrlSession = try #require(fake.insecureUrlSession)
+            #expect(fake.urlSession == insecureUrlSession.session)
+        }
+    }
+    
+    @Test("Can use custom session")
+    func testCanUseCustomSession() async throws {
+        try await withHttpFake() { fake in
+            let customSession = URLSession(configuration: .ephemeral)
+            let _ = await Http.withOptions(.session(customSession)).get("https://httpbin.org/get", queryParams: [:])
+            #expect(fake.urlSession == customSession)
+        }
+    }
+    
     @Test("Can combine multiple options")
     func testCanCombineMultipleOptions() async throws {
         try await withHttpFake() { fake in
